@@ -1,0 +1,7 @@
+image: itri_lab_R2S03.pgm
+resolution: 0.010000
+origin: [-35.513357, -20.616836, 0.000000]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+    - Base      : kobuki
+    - Stacks    : hexagons
+    - Sensor 	: hokuyo
+-->
+<robot name="turtlebot" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find turtlebot_description)/urdf/turtlebot_common_library.urdf.xacro" />
+  <xacro:include filename="$(find turtlebot_description)/urdf/stacks/hexagons.urdf.xacro"/>
+  <xacro:include filename="$(find itri_robot_description)/urdf/kobuki/itri_kobuki_base.urdf.xacro" />
+  <xacro:include filename="$(find itri_robot_description)/urdf/kobuki/gazebo/itri_hokuyo_gazebo.urdf.xacro"/>
+
+  <kobuki/>
+  <stack_hexagons                 parent="base_link"/>
+  <sensor_hokuyo          	      parent="base_link"/>
+</robot>

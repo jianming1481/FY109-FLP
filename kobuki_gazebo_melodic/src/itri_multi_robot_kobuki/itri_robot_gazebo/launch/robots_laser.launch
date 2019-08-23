@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="base"/>
+    <arg name="stacks"/>
+    <arg name="3d_sensor"/>
+
+    <arg name="map_file"/>
+
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" >
+      <param name="frame_id" value="map"/>
+    </node> 
+
+  <!-- #################################### Begin Libra #################################### -->  
+  <group ns="Libra"> 
+    <arg name="robot_name" value="Libra"/>
+    <arg name="initial_pose_x" value="0.0"/>
+    <arg name="initial_pose_y" value="0.0"/>
+    <arg name="initial_pose_z" value="0.0"/>
+    
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" >
+    </node> 
+
+    <node name="map_relay" type="relay" pkg="topic_tools" args="map $(arg robot_name)/map" />
+    <arg name="odom_frame_id" value="$(arg robot_name)/odom"/>
+    <arg name="base_frame_id" value="$(arg robot_name)/base_footprint"/>
+    <arg name="global_frame_id" value="map"/>
+    <arg name="odom_topic" value="$(arg robot_name)/odom" />
+    <arg name="laser_topic" value="$(arg robot_name)/scan" />
+
+    <param name="tf_prefix" value="$(arg robot_name)" />
+
+    <!-- OPEN One_robot launch-->
+    <include file="$(find itri_robot_gazebo)/launch/one_robot.launch" >
+      <arg name="base" value="$(arg base)"/>
+      <arg name="stacks" value="$(arg stacks)"/>
+      <arg name="3d_sensor" value="$(arg 3d_sensor)"/>
+      <arg name="init_pose" value="-x $(arg initial_pose_x) -y $(arg initial_pose_y) -z $(arg initial_pose_z)" />
+      <arg name="robot_name"  value="$(arg robot_name)" />
+    </include>
+
+    <!-- Laser Scan Matcher -->
+    <!--node name="laser_scan_matcher" pkg="laser_scan_matcher" type="laser_scan_matcher" /-->
+
+    <!-- Keyboard Remote Control-->
+    <include file="$(find kobuki_keyop)/launch/keyop.launch">
+    </include>
+    <!-- AMCL -->
+    <arg name="custom_amcl_launch_file" default="$(find kobuki_navigation)/launch/includes/amcl.launch.xml"/>
+    <arg name="initial_pose_a" value="0.0"/>
+    <include file="$(arg custom_amcl_launch_file)">
+        <arg name="initial_pose_x" value="$(arg initial_pose_x)-2.0"/>
+        <arg name="initial_pose_y" value="$(arg initial_pose_y)+1.0"/>
+        <arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
+    </include>
+
+    <!-- Move base -->
+    <arg name="custom_param_file" default="$(find kobuki_navigation)/param/costmap_common_params.yaml"/>
+    <include file="$(find kobuki_navigation)/launch/includes/move_base.launch.xml">
+        <arg name="robot_name"     value="$(arg robot_name)" />
+        <arg name="custom_param_file" value="$(arg custom_param_file)"/>
+        <arg name="global_frame_id"   value="map" />
+    </include>
+  </group>
+  <!-- #################################### END Libra #################################### -->  
+  <!-- #################################### END Taurus #################################### -->  
+</launch>

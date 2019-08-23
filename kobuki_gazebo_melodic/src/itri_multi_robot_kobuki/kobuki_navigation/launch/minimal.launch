@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot_name" default="kobuki" />
+  <!-- Hokuyo laser scanner -->
+  <node name="urg_node" pkg="urg_node" type="urg_node">
+    <param name="ip_address" value="192.168.0.10"/>
+    <param name="tf_prefix"  value="$(arg robot_name)" />
+  </node>
+  
+  <!--Bringup Kobuki Platform-->
+  <include file="$(find itri_robot_bringup)/launch/itri_minimal_kobuki.launch">
+    <arg name="robot_name"  value="$(arg robot_name)" />
+    <remap from="/mobile_base/commands/velocity" to="/$(arg robot_name)/mobile_base/commands/velocity" />
+  </include>
+
+  <!-- Publish a tf from kobuki to Hokuyo -->
+  <node name="tf_kobuki_to_hokuyo" pkg="tf" type="static_transform_publisher" args="0 0 0.08 0 0 0 /$(arg robot_name)/plate_top_link /$(arg robot_name)/laser 100">
+  </node>
+
+  <!-- JoyStick Controller -->
+  <node name="joystick_node" pkg="joy" type="joy_node">
+    <param name="dev" value="/dev/js_ps4" />
+  </node>
+
+  <!-- JoyStick cmd to velocity -->
+  <node name="joyCmd_to_Vel" pkg="turtlebot_teleop" type="turtlebot_teleop_joy">
+    <remap from="/$(arg robot_name)/joyCmd_to_Vel/cmd_vel" to="/$(arg robot_name)/mobile_base/commands/velocity" />
+    <param name="axis_deadman" value="1" />
+  </node>
+  
+  <!--<node name="joyCmd_to_Vel" pkg="teleop_twist_joy" type="teleop_node">
+    <param name="enable_button" value="1" />
+    <param name="enable_turbo_button" value="0" />
+    <remap from="/cmd_vel" to="/mobile_base/commands/velocity" />
+  </node> -->
+</launch>
