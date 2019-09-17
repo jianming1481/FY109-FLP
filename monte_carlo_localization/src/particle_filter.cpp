@@ -35,7 +35,7 @@ void ParticleFilter::build_likelihoodMap()
     if(!likelihood_img.data)
     {
         std::cout << " building likelihood map " << std::endl;
-        image = imread( "/home/lui/map.jpg", 1 );
+        image = imread( "/home/lui/itri_lab_R2S03.jpg", 1 );
         cv::flip(image, image, 0);
         cv::Mat gray_img;
         cv::Mat binary_img;
