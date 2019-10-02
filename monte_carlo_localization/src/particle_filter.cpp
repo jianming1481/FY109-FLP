@@ -525,3 +525,8 @@ double* ParticleFilter::get_Likelihood_map()
 {
     return likeliHood_map;
 }
+
+void ParticleFilter::read_mag_map()
+{
+    csv_reader_.set_filename()
+}

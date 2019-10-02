@@ -21,6 +21,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <boost/math/distributions/normal.hpp>
+#include "csv_reader.h"
 
 using namespace Eigen;
 using boost::math::normal;
@@ -68,6 +69,12 @@ private:
     std::vector<Vector2i> tpos_wall;
     std::vector<Vector2i> sensorWall_Pos;
     std::vector<Particle,  Eigen::aligned_allocator<Particle> > pAry;
+
+    // Magnetic Map
+    std::vector<std::vector<double>> mag_data_zx;
+    std::vector<std::vector<double>> mag_data_zy;
+    std::vector<std::vector<double>> mag_data_zz;
+    CSVReader csv_reader_;
 public:
     ParticleFilter(int p_Num);
     ~ParticleFilter(){};
@@ -78,6 +85,9 @@ public:
     double Gaussion(double input);
     void get_mapSize(int *map_size);
     void get_likelihoodMapSize(int *map_size);
+
+    // magnetic map
+    void read_mag_map();
     /***********************************************************/
     /******************** Monte Carlo Method *******************/
     /***********************************************************/
