@@ -21,10 +21,10 @@ class CSVReader
         delimeter = ",";
     }
     // Function to fetch data from a CSV File
-    std::vector<std::vector<double> > getData();
+    std::vector<std::vector<double> > get_data();
 };
 
-std::vector<std::vector<double>> CSVReader::getData()
+std::vector<std::vector<double>> CSVReader::get_data()
 {
     std::ifstream file(fileName);
     std::vector<std::vector<std::string> > dataList;
@@ -44,10 +44,10 @@ std::vector<std::vector<double>> CSVReader::getData()
     {
         for(int j=0; j<dataList[0].size();j++)
         {
-            tmp_row.data.clear();
             tmp_row.push_back(std::stod(dataList[i][j]));
         }
         m_data.push_back(tmp_row);
+        tmp_row.clear();
     }
     return m_data;
 }

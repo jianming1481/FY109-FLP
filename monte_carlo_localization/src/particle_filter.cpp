@@ -20,6 +20,7 @@ ParticleFilter::ParticleFilter(int p_Num)
     srand (time(NULL));
     s=normal(0,50);
     normal_max_value = pdf(s,0);
+    read_mag_map();
 }
 
 double ParticleFilter::Gaussion(double input)
@@ -35,7 +36,7 @@ void ParticleFilter::build_likelihoodMap()
     if(!likelihood_img.data)
     {
         std::cout << " building likelihood map " << std::endl;
-        image = imread( "/home/lui/itri_lab_R2S03.jpg", 1 );
+        image = imread( "/home/lui/map.jpg", 1 );
         cv::flip(image, image, 0);
         cv::Mat gray_img;
         cv::Mat binary_img;
@@ -528,5 +529,11 @@ double* ParticleFilter::get_Likelihood_map()
 
 void ParticleFilter::read_mag_map()
 {
-    csv_reader_.set_filename()
+    csv_reader_.set_filename("/home/lui/catkin_ws/src/FY109-FLP/magnetic_map_data/predic/mag_pred_x.csv");
+    mag_data_zx = csv_reader_.get_data();
+    std::cout << "Magnetic Data Size Width: " << mag_data_zx.size() << " Height: " << mag_data_zx[0].size() << std::endl; 
+    csv_reader_.set_filename("/home/lui/catkin_ws/src/FY109-FLP/magnetic_map_data/predic/mag_pred_y.csv");
+    mag_data_zy = csv_reader_.get_data();
+    csv_reader_.set_filename("/home/lui/catkin_ws/src/FY109-FLP/magnetic_map_data/predic/mag_pred_z.csv");
+    mag_data_zz = csv_reader_.get_data();
 }
