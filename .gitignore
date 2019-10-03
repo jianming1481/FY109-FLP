@@ -1,0 +1,10 @@
+# build folders
+install/
+log/
+build/
+# Other files and folders
+.settings/
+*.vscode
+*.txt.user
+*.txt
+
