@@ -21,7 +21,6 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <boost/math/distributions/normal.hpp>
-#include "csv_reader.h"
 
 using namespace Eigen;
 using boost::math::normal;
@@ -74,7 +73,6 @@ private:
     std::vector<std::vector<double>> mag_data_zx;
     std::vector<std::vector<double>> mag_data_zy;
     std::vector<std::vector<double>> mag_data_zz;
-    CSVReader csv_reader_;
 public:
     ParticleFilter(int p_Num);
     ~ParticleFilter(){};

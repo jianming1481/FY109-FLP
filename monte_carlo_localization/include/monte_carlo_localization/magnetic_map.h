@@ -14,6 +14,7 @@ public:
     ~magnetic_map(){}
     int width;
     int height;
-    vector<vector<double>> mag_map;
+    double max_value;
+    vector<vector<double>> data;
 };
 #endif

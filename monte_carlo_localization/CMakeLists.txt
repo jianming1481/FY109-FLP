@@ -26,7 +26,7 @@ include_directories(
 )
 # link_directories(${catkin_LIBRARY_DIRS})
 
-add_library(${PROJECT_NAME}_lib include/${PROJECT_NAME}/particle_filter.h src/particle_filter.cpp)
+add_library(${PROJECT_NAME}_lib src/particle_filter.cpp src/mag_map_publisher.cpp)
 add_executable(particle_filter_node src/particle_filter_node.cpp)
 target_link_libraries(particle_filter_node
   ${catkin_LIBRARIES}
@@ -40,3 +40,8 @@ target_link_libraries(test_csv_reader
   ${PROJECT_NAME}_lib
 )
 
+add_executable(test_magPublisher src/test_magPub_main.cpp)
+target_link_libraries(test_magPublisher
+  ${catkin_LIBRARIES}
+  ${PROJECT_NAME}_lib
+)

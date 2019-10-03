@@ -30,11 +30,11 @@ private:
     ros::Publisher mag_map_z_publisher_;
 
     // Function
-    void generate_OccGridMapMsg(magnetic_map mag_map);
 public:
     mag_map_publisher(/* args */);
     ~mag_map_publisher(){}
     void read_magnetic_map();
-    void publish_mag_likelihood_map();
+    void publish_mag_map();
+    nav_msgs::OccupancyGrid generate_OccGridMapMsg(magnetic_map mag_map);
 };
 #endif
