@@ -1,8 +1,0 @@
-prefix=/home/lui/catkin_ws/src/FY109-FLP/monte_carlo_localization/build/devel
-
-Name: monte_carlo_localization
-Description: Description of monte_carlo_localization
-Version: 1.0.0
-Cflags: -I/home/lui/catkin_ws/src/FY109-FLP/monte_carlo_localization/include
-Libs: -L/home/lui/catkin_ws/src/FY109-FLP/monte_carlo_localization/build/devel/lib 
-Requires: 

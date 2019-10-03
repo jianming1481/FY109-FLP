@@ -1,8 +1,0 @@
-prefix=/usr/local
-
-Name: monte_carlo_localization
-Description: Description of monte_carlo_localization
-Version: 1.0.0
-Cflags: -I/usr/local/include
-Libs: -L/usr/local/lib 
-Requires: 
