@@ -34,7 +34,7 @@ target_link_libraries(particle_filter_node
   ${OpenCV_LIBS}
 )
 
-add_executable(test_csv_reader src/main.cpp)
+add_executable(test_csv_reader src/test_CSV_main.cpp)
 target_link_libraries(test_csv_reader
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}_lib

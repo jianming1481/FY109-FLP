@@ -1,3 +1,6 @@
+#ifndef _CSV_READER_H_
+#define _CSV_READER_H_
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -51,3 +54,5 @@ std::vector<std::vector<double>> CSVReader::get_data()
     }
     return m_data;
 }
+
+#endif

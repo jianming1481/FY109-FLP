@@ -2,9 +2,9 @@
 install/
 log/
 build/
+monte_carlo_localization/build/
 # Other files and folders
 .settings/
 *.vscode
 *.txt.user
-*.txt
 
