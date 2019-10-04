@@ -34,8 +34,8 @@ nav_msgs::OccupancyGrid mag_map_publisher::generate_OccGridMapMsg(magnetic_map m
     mag_map_msg.info.width = mag_map.width;
     mag_map_msg.info.height = mag_map.height;
     geometry_msgs::Pose origin;
-    origin.position.x=-mag_map.width/2*0.5;
-    origin.position.y=-mag_map.height/2*0.5;
+    origin.position.x=-35.657444;
+    origin.position.y=-20.981978;
     mag_map_msg.info.origin = origin;
     for(int i=0;i<mag_map.height;i++)
     {
