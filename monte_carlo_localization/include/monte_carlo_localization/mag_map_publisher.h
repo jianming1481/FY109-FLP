@@ -16,9 +16,9 @@ private:
     /* data */
     CSVReader csv_reader_;
     // Magnetic Map
-    magnetic_map mag_data_zx_;
-    magnetic_map mag_data_zy_;
-    magnetic_map mag_data_zz_;
+    MagneticMap mag_data_zx_;
+    MagneticMap mag_data_zy_;
+    MagneticMap mag_data_zz_;
     nav_msgs::OccupancyGrid mag_map_x_msg_;
     nav_msgs::OccupancyGrid mag_map_y_msg_;
     nav_msgs::OccupancyGrid mag_map_z_msg_;
@@ -35,6 +35,6 @@ public:
     ~mag_map_publisher(){}
     void read_magnetic_map();
     void publish_mag_map();
-    nav_msgs::OccupancyGrid generate_OccGridMapMsg(magnetic_map mag_map);
+    nav_msgs::OccupancyGrid generate_OccGridMapMsg(MagneticMap mag_map);
 };
 #endif

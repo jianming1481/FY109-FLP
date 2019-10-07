@@ -92,6 +92,7 @@ public:
     double randomX();
     double randomY();
     void initParticle_Filter(/*int P_Num,int L_Num*/);
+    void re_samplingParticles(double x, double y, double yaw);
     int rand_Range();
     void moveParticle(geometry_msgs::Twist tmp);
     void Sim_LaserWall(Vector3d robot);

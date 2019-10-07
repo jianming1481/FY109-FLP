@@ -45,3 +45,10 @@ target_link_libraries(test_magPublisher
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}_lib
 )
+
+add_executable(test_LaserPublisher src/test_laser_map_main.cpp)
+target_link_libraries(test_LaserPublisher
+  yaml-cpp
+  ${catkin_LIBRARIES}
+  ${PROJECT_NAME}_lib
+)

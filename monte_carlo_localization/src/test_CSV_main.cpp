@@ -7,10 +7,10 @@ int main(int argc, char** argv)
 {
     CSVReader reader("/home/lui/catkin_ws/src/FY109-FLP/magnetic_map_data/predic/mag_pred_x.csv");
     vector<vector<double>> data;
-    magnetic_map map;
+    MagneticMap map;
     map = reader.get_data();
-    int height = map.height;
-    int width = map.width;
+    int height = map.height_;
+    int width = map.width_;
     cout << "height: " << height << " width: " << width << endl;
     for(int i=0; i<height;i++)
     {

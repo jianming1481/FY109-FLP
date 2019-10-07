@@ -537,3 +537,8 @@ void ParticleFilter::read_mag_map()
     // csv_reader_.set_filename("/home/lui/catkin_ws/src/FY109-FLP/magnetic_map_data/predic/mag_pred_z.csv");
     // mag_data_zz = csv_reader_.get_data();
 }
+
+void ParticleFilter::re_samplingParticles(double x, double y, double yaw)
+{
+
+}
