@@ -52,3 +52,17 @@ target_link_libraries(test_LaserPublisher
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}_lib
 )
+
+add_executable(test_LaserLikelihoodMap src/test_laser_likelihood_map_main.cpp)
+target_link_libraries(test_LaserLikelihoodMap
+  yaml-cpp
+  ${catkin_LIBRARIES}
+  ${PROJECT_NAME}_lib
+)
+
+add_executable(test_Publisher src/test_laser_likelihood_map_pub_main.cpp)
+target_link_libraries(test_Publisher
+  yaml-cpp
+  ${catkin_LIBRARIES}
+  ${PROJECT_NAME}_lib
+)

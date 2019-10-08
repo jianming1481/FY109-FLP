@@ -25,14 +25,17 @@ public:
         laser_map_publisher_ = nh_.advertise<nav_msgs::OccupancyGrid>("laser_map", 1);
     }
     ~LaserMapPublisher(){}
-    void publish_laser_map()
+    void publish_map()
     {
         laser_map_publisher_.publish(laser_map_msg_);
     }
 
     void find_unique_value_in_map(LaserMap map)
     {
-        vector<double> pixel_value_vec;  // 0, 205, 254
+        // 0:   obstacles
+        // 205: unknown
+        // 254: no obstacle
+        vector<double> pixel_value_vec;  
         bool different = true;
         double pixel_value;
         for(int i=0;i<map.height_;i++)
@@ -57,12 +60,12 @@ public:
                 }
             }
         }
-        cout << "Pixel Value Vector: ";
-        for(int i=0;i<pixel_value_vec.size();i++)
-        {
-            cout << pixel_value_vec[i] << ", ";
-        }
-        cout << endl;
+        // cout << "Pixel Value Vector: ";
+        // for(int i=0;i<pixel_value_vec.size();i++)
+        // {
+        //     cout << pixel_value_vec[i] << ", ";
+        // }
+        // cout << endl;
     }
 
     void generate_OccGridMapMsg(LaserMap map)
@@ -102,9 +105,9 @@ public:
                 if(min_value > map.data_[i][j]) min_value = map.data_[i][j];
             }
         }
-        cout << "Generate Map Message Done!" << endl;
-        cout << "Max_value: " << max_value << endl;
-        cout << "Min_valueL " << min_value << endl;
+        cout << "ROS MAP Message Generate Done!" << endl;
+        // cout << "Max_value: " << max_value << endl;
+        // cout << "Min_valueL " << min_value << endl;
     }
 };
 #endif
