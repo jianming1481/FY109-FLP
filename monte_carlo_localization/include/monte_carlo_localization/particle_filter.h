@@ -33,6 +33,25 @@ typedef struct PStruct Particle;
 
 class ParticleFilter
 {
+
+private:
+    int pNum;
+    int sensorLineNum;
+    int *sensorWall_Dist;
+    double shift_x;
+    double shift_y;
+    double rotation;
+    double tmp_yaw;
+
+    Vector2i tPos;
+    Vector3d Robot;
+    Vector3d predictionPose;
+    std::vector<Vector3d> posAry;
+    std::vector<Vector2i> tpos_wall;
+    std::vector<Vector2i> sensorWall_Pos;
+    std::vector<Particle,  Eigen::aligned_allocator<Particle> > pAry;
+
+    // Magnetic Map
 public:
     ParticleFilter(int p_Num);
     ~ParticleFilter(){};
@@ -57,30 +76,11 @@ public:
     /************************************************************/
     Vector3d get_Robot_pos();
     Vector3d get_Estimate_pose();
+    double* get_Likelihood_map();
     std::vector<Vector2i> get_SensorWall();
     std::vector<Vector3d> get_Particle();
     std::vector<Vector2i> get_tpwall();
     std::vector<Vector2i> get_simSensorWall();
-
-private:
-    int pNum;
-    int sensorLineNum;
-    int *sensorWall_Dist;
-    double shift_x;
-    double shift_y;
-    double rotation;
-    double tmp_yaw;
-
-    Vector2i tPos;
-    Vector3d Robot;
-    Vector3d predictionPose;
-    std::vector<Vector3d> posAry;
-    std::vector<Vector2i> tpos_wall;
-    std::vector<Vector2i> sensorWall_Pos;
-    std::vector<Particle,  Eigen::aligned_allocator<Particle> > pAry;
-
-    // Magnetic Map
-
 };
 
 #endif

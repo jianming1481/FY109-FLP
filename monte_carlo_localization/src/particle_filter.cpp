@@ -12,10 +12,152 @@
 #define trust_imu false
 
 Particle tmp_p;
+bool reflash;
 
 ParticleFilter::ParticleFilter(int p_Num)
 {
     pNum = p_Num;
+    srand (time(NULL));
+    s=normal(0,50);
+    normal_max_value = pdf(s,0);
+    read_mag_map();
+}
+
+double ParticleFilter::Gaussion(double input)
+{
+    return pdf(s,input)/normal_max_value;
+}
+
+void ParticleFilter::build_likelihoodMap()
+{
+    int map_index;
+    likelihood_img = imread("/home/lui/likelihood_img.jpg", 0 );
+    cv::flip(likelihood_img, likelihood_img, 0);
+    if(!likelihood_img.data)
+    {
+        std::cout << " building likelihood map " << std::endl;
+        image = imread( "/home/lui/map.jpg", 1 );
+        cv::flip(image, image, 0);
+        cv::Mat gray_img;
+        cv::Mat binary_img;
+
+        mapW = image.cols;
+        mapH = image.rows;
+
+        // For likelihood field generate range
+        int range = 80;
+        // For OpenCV Save Map
+        cv::cvtColor(image,gray_img,CV_RGB2GRAY);
+        cv::threshold(gray_img,binary_img,10,255,CV_THRESH_BINARY);
+        // imwrite("/home/lui/binary_img.jpg",binary_img);
+        // std::cout << "Save Binary Image Done!" << std::endl;
+
+        map = new bool[mapW*mapH];
+        likelihood_mapW = mapW+range*2;
+        likelihood_mapH = mapH+range*2;
+        cv_likelihood_map=new cv::Mat(cv::Size(likelihood_mapW,likelihood_mapH),CV_8UC1,Scalar(0));
+        likeliHood_map = new double[likelihood_mapW*likelihood_mapH];
+
+        // Initial Likelihood Map
+        for(int i = 0 ;i < likelihood_mapW*likelihood_mapH;i++)
+        {
+            // std::cout << "Initialize likelihood field... Give a small value in each grid" << std::endl; 
+            likeliHood_map[i] = 0.001;
+        }
+
+        // Markup the probablity of obstacle
+        for(int i=0;i<mapH;i++)
+        {
+            for(int j=0;j<mapW;j++)
+            {
+                if(binary_img.data[(i*mapW)+j]==0)
+                {   
+                    map_index = i*mapW+j;
+                    map[map_index] = true;
+
+                    for(int m_i=-1*range; m_i<range; m_i++)
+                    {
+                        for(int m_j=-1*range; m_j<range; m_j++)
+                        {
+                            double dist = hypot(m_i,m_j);
+                            double markNum = Gaussion(dist);
+                            int likelihood_field_index = (i+range)*likelihood_mapW+j+range;
+                            likelihood_field_index = likelihood_field_index+m_i*likelihood_mapW+m_j;
+                            if(likelihood_field_index < 0 || likelihood_field_index > likelihood_mapW*likelihood_mapH)
+                            {
+                                // std::cout << "Something Wrong Inside building map loop!!!" << std::endl;
+                                continue;
+                            }
+
+                            if(likeliHood_map[likelihood_field_index]<markNum)
+                            {
+                                likeliHood_map[likelihood_field_index] = markNum;
+                                markNum = markNum*255;
+                                cv_likelihood_map->data[likelihood_field_index] = markNum;
+                            }else{
+                                // std::cout << "err " ; 
+                            }
+                            
+                        }
+                    }
+                }
+            }
+        }
+        std::cout << "Likelihood map done!" << std::endl;
+        cv::flip(*cv_likelihood_map, *cv_likelihood_map, 0);
+        imwrite("/home/lui/likelihood_img.jpg",*cv_likelihood_map);
+    }else{
+        image = imread( "/home/lui/map.jpg", 1 );
+        cv::flip(image, image, 0);
+        mapW = image.cols;
+        mapH = image.rows;
+        likelihood_mapW = likelihood_img.cols;
+        likelihood_mapH = likelihood_img.rows;
+
+        cv::Mat gray_img;
+        cv::Mat binary_img;
+        cv::cvtColor(image,gray_img,CV_RGB2GRAY);
+        cv::threshold(gray_img,binary_img,10,255,CV_THRESH_BINARY);
+
+        map = new bool[mapW*mapH];
+        cv_likelihood_map=new cv::Mat(cv::Size(likelihood_mapW,likelihood_mapH),CV_8UC1,Scalar(0));
+        likeliHood_map = new double[likelihood_mapW*likelihood_mapH];
+        double markNum=0.0;
+        for(int i=0; i<likelihood_mapH; i++)
+        {
+            for(int j=0; j<likelihood_mapW; j++)
+            {
+                cv_likelihood_map->data[i*likelihood_mapW+j] = likelihood_img.data[i*likelihood_mapW+j];
+                markNum = cv_likelihood_map->data[i*likelihood_mapW+j]/255.0;
+                likeliHood_map[i*likelihood_mapW+j] = markNum;
+            }
+        }
+        for(int i=0;i<mapH;i++)
+        {
+            for(int j=0;j<mapW;j++)
+            {
+                if(binary_img.data[(i*binary_img.cols)+j]==0)
+                {
+                    map[(i*mapW)+j] = true;
+                }else{
+                    map[(i*mapW)+j] = false;
+                }
+            }
+        }
+        std::cout << "Loading Likelihood map success!" << std::endl;
+    }
+}
+
+void ParticleFilter::get_mapSize(int *map_size)
+{
+    map_size[0] = mapW;
+    map_size[1] = mapH;
+}
+
+void ParticleFilter::get_likelihoodMapSize(int *map_size)
+{
+    map_size[0] = likelihood_mapW;
+    map_size[1] = likelihood_mapH;
 }
 
 double ParticleFilter::randomX() // return the value between 0 ~ N-1
@@ -379,4 +521,24 @@ std::vector<Vector2i> ParticleFilter::get_tpwall()
 std::vector<Vector2i> ParticleFilter::get_simSensorWall()
 {
     return sensorWall_Pos;
+}
+double* ParticleFilter::get_Likelihood_map()
+{
+    return likeliHood_map;
+}
+
+void ParticleFilter::read_mag_map()
+{
+    // csv_reader_.set_filename("/home/lui/catkin_ws/src/FY109-FLP/magnetic_map_data/predic/mag_pred_x.csv");
+    // mag_data_zx = csv_reader_.get_data();
+    // std::cout << "Magnetic Data Size Width: " << mag_data_zx.size() << " Height: " << mag_data_zx[0].size() << std::endl; 
+    // csv_reader_.set_filename("/home/lui/catkin_ws/src/FY109-FLP/magnetic_map_data/predic/mag_pred_y.csv");
+    // mag_data_zy = csv_reader_.get_data();
+    // csv_reader_.set_filename("/home/lui/catkin_ws/src/FY109-FLP/magnetic_map_data/predic/mag_pred_z.csv");
+    // mag_data_zz = csv_reader_.get_data();
+}
+
+void ParticleFilter::re_samplingParticles(double x, double y, double yaw)
+{
+
 }
