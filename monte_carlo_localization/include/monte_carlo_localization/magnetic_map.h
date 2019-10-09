@@ -1,5 +1,5 @@
-#ifndef _MAGNETICMAP_H
-#define _MAGNETICMAP_H
+#ifndef _MAGNETIC_MAP_H_
+#define _MAGNETIC_MAP_H_
 
 #include <iostream> // cout, cerr
 #include <vector>

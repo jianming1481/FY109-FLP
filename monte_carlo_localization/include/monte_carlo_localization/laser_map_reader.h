@@ -1,5 +1,5 @@
-#ifndef _LASER_MAP_READER_H
-#define _LASER_MAP_READER_H
+#ifndef _LASER_MAP_READER_H_
+#define _LASER_MAP_READER_H_
 
 #include <iostream> // cout, cerr
 #include <vector>

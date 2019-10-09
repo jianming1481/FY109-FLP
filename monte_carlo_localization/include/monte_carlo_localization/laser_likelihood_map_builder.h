@@ -1,5 +1,5 @@
-#ifndef _LASERLIKELIHOODMAPBUILDER_H
-#define _LASERLIKELIHOODMAPBUILDER_H
+#ifndef _LASER_LIKELIHOOD_MAP_BUILDER_H_
+#define _LASER_LIKELIHOOD_MAP_BUILDER_H_
 
 #include <iostream> // cout, cerr
 #include <vector>

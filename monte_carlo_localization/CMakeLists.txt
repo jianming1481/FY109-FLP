@@ -26,7 +26,7 @@ include_directories(
 )
 # link_directories(${catkin_LIBRARY_DIRS})
 
-add_library(${PROJECT_NAME}_lib src/particle_filter.cpp src/mag_map_publisher.cpp)
+add_library(${PROJECT_NAME}_lib src/particle_filter.cpp)
 add_executable(particle_filter_node src/particle_filter_node.cpp)
 target_link_libraries(particle_filter_node
   ${catkin_LIBRARIES}
@@ -34,35 +34,36 @@ target_link_libraries(particle_filter_node
   ${OpenCV_LIBS}
 )
 
-add_executable(test_csv_reader src/test_CSV_main.cpp)
-target_link_libraries(test_csv_reader
-  ${catkin_LIBRARIES}
-  ${PROJECT_NAME}_lib
-)
+# add_executable(test_csv_reader src/test_CSV_main.cpp)
+# target_link_libraries(test_csv_reader
+#   ${catkin_LIBRARIES}
+#   # ${PROJECT_NAME}_lib
+# )
 
-add_executable(test_magPublisher src/test_magPub_main.cpp)
-target_link_libraries(test_magPublisher
-  ${catkin_LIBRARIES}
-  ${PROJECT_NAME}_lib
-)
+# add_executable(test_magPublisher src/test_magPub_main.cpp)
+# target_link_libraries(test_magPublisher
+#   ${catkin_LIBRARIES}
+#   # ${PROJECT_NAME}_lib
+# )
 
-add_executable(test_LaserPublisher src/test_laser_map_main.cpp)
-target_link_libraries(test_LaserPublisher
-  yaml-cpp
-  ${catkin_LIBRARIES}
-  ${PROJECT_NAME}_lib
-)
+# add_executable(test_LaserPublisher src/test_laser_map_main.cpp)
+# target_link_libraries(test_LaserPublisher
+#   yaml-cpp
+#   ${catkin_LIBRARIES}
+#   # ${PROJECT_NAME}_lib
+# )
 
-add_executable(test_LaserLikelihoodMap src/test_laser_likelihood_map_main.cpp)
-target_link_libraries(test_LaserLikelihoodMap
-  yaml-cpp
-  ${catkin_LIBRARIES}
-  ${PROJECT_NAME}_lib
-)
+# add_executable(test_LaserLikelihoodMap src/test_laser_likelihood_map_main.cpp)
+# target_link_libraries(test_LaserLikelihoodMap
+#   yaml-cpp
+#   ${catkin_LIBRARIES}
+#   # ${PROJECT_NAME}_lib
+# )
 
-add_executable(test_Publisher src/test_laser_likelihood_map_pub_main.cpp)
-target_link_libraries(test_Publisher
-  yaml-cpp
-  ${catkin_LIBRARIES}
-  ${PROJECT_NAME}_lib
-)
+# add_executable(test_Publisher src/test_laser_likelihood_map_pub_main.cpp)
+# target_link_libraries(test_Publisher
+#   yaml-cpp
+#   ${catkin_LIBRARIES}
+#   # ${PROJECT_NAME}_lib
+# )
+

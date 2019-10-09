@@ -1,5 +1,5 @@
-#ifndef _LASERMAP_H
-#define _LASERMAP_H
+#ifndef _LASER_MAP_H_
+#define _LASER_MAP_H_
 
 #include <iostream> // cout, cerr
 #include <vector>
