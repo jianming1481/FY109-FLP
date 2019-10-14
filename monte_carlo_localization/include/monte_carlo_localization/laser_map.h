@@ -11,18 +11,18 @@ class LaserMap
 public:
 	LaserMap()
 	{
-	origin_ = vector<double>(3, 0.0);
+	origin = vector<double>(3, 0.0);
 	}
 	~LaserMap(){}
 
-	int negate_;
-	int height_;
-	int width_;
-	double resolution_;
-	double free_thresh_;
-	double occupied_thresh_;
+	int negate;
+	int height;
+	int width;
+	double resolution;
+	double free_thresh;
+	double occupied_thresh;
 
-    vector<double> origin_;
-	vector<vector<double>> data_;      // for storage the pixel value
+    vector<double> origin;
+	vector<vector<double>> data;      // for storage the pixel value
 };
 #endif

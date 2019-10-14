@@ -15,12 +15,12 @@ public:
 	}
 	~MagneticMap(){}
 
-	int height_;
-	int width_;
-	string resolution_;
-    vector<double> origin_;
-	vector<vector<double>> mag_x_data_;
-    vector<vector<double>> mag_y_data_;
-    vector<vector<double>> mag_z_data_;
+	int height;
+	int width;
+	string resolution;
+    vector<double> origin;
+	vector<vector<double>> mag_x_data;
+    vector<vector<double>> mag_y_data;
+    vector<vector<double>> mag_z_data;
 };
 #endif

@@ -12,22 +12,22 @@ using namespace std;
 class LaserMapPublisher
 {
 private:
-    nav_msgs::OccupancyGrid laser_map_msg_;
+    nav_msgs::OccupancyGrid laser_map_msg;
 
     // ROS
-    ros::NodeHandle nh_;
-    ros::Publisher laser_map_publisher_;
+    ros::NodeHandle nh;
+    ros::Publisher laser_map_publisher;
 
     // Function
 public:
     LaserMapPublisher()
     {
-        laser_map_publisher_ = nh_.advertise<nav_msgs::OccupancyGrid>("laser_map", 1);
+        laser_map_publisher = nh.advertise<nav_msgs::OccupancyGrid>("laser_map", 1);
     }
     ~LaserMapPublisher(){}
     void publish_map()
     {
-        laser_map_publisher_.publish(laser_map_msg_);
+        laser_map_publisher.publish(laser_map_msg);
     }
 
     void find_unique_value_in_map(LaserMap map)
@@ -38,11 +38,11 @@ public:
         vector<double> pixel_value_vec;  
         bool different = true;
         double pixel_value;
-        for(int i=0;i<map.height_;i++)
+        for(int i=0;i<map.height;i++)
         {
-            for(int j=0;j<map.width_;j++)
+            for(int j=0;j<map.width;j++)
             {
-                pixel_value = map.data_[i][j];
+                pixel_value = map.data[i][j];
                 for (int i=0;i<pixel_value_vec.size();i++)
                 {
                     if (pixel_value == pixel_value_vec[i])
@@ -70,39 +70,39 @@ public:
 
     void generate_OccGridMapMsg(LaserMap map)
     {
-        laser_map_msg_.header.frame_id = "map";
-        laser_map_msg_.info.resolution = map.resolution_;
-        laser_map_msg_.info.width = map.width_;
-        laser_map_msg_.info.height = map.height_;
+        laser_map_msg.header.frame_id = "map";
+        laser_map_msg.info.resolution = map.resolution;
+        laser_map_msg.info.width = map.width;
+        laser_map_msg.info.height = map.height;
         geometry_msgs::Pose tmp_origin;
-        tmp_origin.position.x = map.origin_[0];
-        tmp_origin.position.y = map.origin_[1];
-        tmp_origin.position.z = map.origin_[2];
-        laser_map_msg_.info.origin = tmp_origin;
+        tmp_origin.position.x = map.origin[0];
+        tmp_origin.position.y = map.origin[1];
+        tmp_origin.position.z = map.origin[2];
+        laser_map_msg.info.origin = tmp_origin;
     
         double max_value = 0; 
         double min_value = 99;
         double pixel_value;
         find_unique_value_in_map(map);
         bool different = true;
-        for(int i=0;i<map.height_;i++)
+        for(int i=0;i<map.height;i++)
         {
-            for(int j=0;j<map.width_;j++)
+            for(int j=0;j<map.width;j++)
             {
-                pixel_value = map.data_[i][j];
+                pixel_value = map.data[i][j];
                 if(pixel_value ==0)
                 {
-                    laser_map_msg_.data.push_back(100);
+                    laser_map_msg.data.push_back(100);
                 }else if(pixel_value <= 205 && pixel_value >0)
                 {
-                    laser_map_msg_.data.push_back(-1);
+                    laser_map_msg.data.push_back(-1);
                 }else{
-                    laser_map_msg_.data.push_back(0);
+                    laser_map_msg.data.push_back(0);
                 }
 
                 // laser_map_msg_.data.push_back(map.data_[i][j]);
-                if(max_value < map.data_[i][j]) max_value = map.data_[i][j];
-                if(min_value > map.data_[i][j]) min_value = map.data_[i][j];
+                if(max_value < map.data[i][j]) max_value = map.data[i][j];
+                if(min_value > map.data[i][j]) min_value = map.data[i][j];
             }
         }
         cout << "ROS MAP Message Generate Done!" << endl;

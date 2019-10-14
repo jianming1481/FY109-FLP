@@ -15,18 +15,18 @@ public:
 	~LaserLikelihoodMap(){}
     LaserLikelihoodMap(LaserMap map)
     {
-        height_ = map.height_;
-        width_ = map.width_;
-        resolution_ = map.resolution_;
-        origin_ = map.origin_;
-        // data_ = map.data_;
+        height = map.height;
+        width = map.width;
+        resolution = map.resolution;
+        origin = map.origin;
+        // data = map.data;
     }
 
-	int height_;
-	int width_;
+	int height;
+	int width;
     
-	double resolution_;
-    vector<double> origin_;
-	vector<vector<double>> data_;      // for storage the pixel value
+	double resolution;
+    vector<double> origin;
+	vector<vector<double>> data;      // for storage the pixel value
 };
 #endif

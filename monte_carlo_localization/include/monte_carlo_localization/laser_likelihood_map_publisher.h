@@ -12,44 +12,44 @@ using namespace std;
 class LaserLikelihoodMapPublisher
 {
 private:
-    nav_msgs::OccupancyGrid map_msg_;
+    nav_msgs::OccupancyGrid map_msg;
 
     // ROS
-    ros::NodeHandle nh_;
-    ros::Publisher publisher_;
+    ros::NodeHandle nh;
+    ros::Publisher publisher;
 
 public:
     LaserLikelihoodMapPublisher()
     {
-        publisher_ = nh_.advertise<nav_msgs::OccupancyGrid>("laser_likelihood_map", 1);
+        publisher = nh_.advertise<nav_msgs::OccupancyGrid>("laser_likelihood_map", 1);
     }
     ~LaserLikelihoodMapPublisher(){}
     void publish_map()
     {
-        publisher_.publish(map_msg_);
+        publisher.publish(map_msg);
     }
 
     void generate_OccGridMapMsg(LaserLikelihoodMap map)
     {
-        map_msg_.header.frame_id = "map";
-        map_msg_.info.resolution = map.resolution_;
-        map_msg_.info.width = map.width_;
-        map_msg_.info.height = map.height_;
+        map_msg.header.frame_id = "map";
+        map_msg.info.resolution = map.resolution;
+        map_msg.info.width = map.width;
+        map_msg.info.height = map.height;
         geometry_msgs::Pose tmp_origin;
-        tmp_origin.position.x = map.origin_[0];
-        tmp_origin.position.y = map.origin_[1];
-        tmp_origin.position.z = map.origin_[2];
-        map_msg_.info.origin = tmp_origin;
+        tmp_origin.position.x = map.origin[0];
+        tmp_origin.position.y = map.origin[1];
+        tmp_origin.position.z = map.origin[2];
+        map_msg.info.origin = tmp_origin;
         
-        for(int i=0;i<map.height_;i++)
+        for(int i=0;i<map.height;i++)
         {
-            for(int j=0;j<map.width_;j++)
+            for(int j=0;j<map.width;j++)
             {
-                if(map.data_[i][j]==0)
+                if(map.data[i][j]==0)
                 {
-                    map_msg_.data.push_back(-1);
+                    map_msg.data.push_back(-1);
                 }else{
-                    map_msg_.data.push_back(map.data_[i][j]*100);
+                    map_msg.data.push_back(map.data[i][j]*100);
                 }
             }
         }

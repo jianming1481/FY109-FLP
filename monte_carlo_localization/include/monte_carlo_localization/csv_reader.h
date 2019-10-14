@@ -15,7 +15,7 @@ class CSVReader
     std::string fileName;
     std::string delimeter;
     MagneticMap map;
-    public:
+public:
     CSVReader(){}
     CSVReader(std::string filename, std::string delm = ",") :
         fileName(filename), delimeter(delm)

@@ -19,15 +19,15 @@ public:
   
   void print_data()
   {
-    cout << "Width: " << width_ << "\tHeight: " << height_ << endl;
-    cout << "pgm version: " << pgm_version_ << endl;
-    cout << "Max Gray Value: " << max_grayscale_value_ << endl;
+    cout << "Width: " << width << "\tHeight: " << height << endl;
+    cout << "pgm version: " << pgm_version << endl;
+    cout << "Max Gray Value: " << max_grayscale_value << endl;
 
-    for(int i = 0; i < height_; i++) 
+    for(int i = 0; i < height; i++) 
     {
-      for(int j = 0; j < width_; j++) 
+      for(int j = 0; j < width; j++) 
       {
-        cout << (int)data_[i][j] << " ";
+        cout << (int)data[i][j] << " ";
       }
       cout << endl;
     }
@@ -38,11 +38,11 @@ public:
     vector<vector<double>> output_data;
     vector<double> tmp;
 
-    for(int i=0;i<height_;i++)
+    for(int i=0;i<height;i++)
     {
-      for(int j=0;j<width_;j++)
+      for(int j=0;j<width;j++)
       {
-        tmp.push_back(data_[i][j]);
+        tmp.push_back(data[i][j]);
       }
       output_data.push_back(tmp);
       tmp.clear();
@@ -53,15 +53,15 @@ public:
   LaserMap get_map()
   {
     LaserMap map;
-    map.height_ = height_;
-    map.width_ = width_;
-    map.resolution_ = resolution_;
-    map.origin_ = origin_;
-    map.negate_ = negate_;
-    map.occupied_thresh_ = occupied_thresh_;
-    map.free_thresh_ = free_thresh_;
+    map.height = height;
+    map.width = width;
+    map.resolution = resolution;
+    map.origin = origin;
+    map.negate = negate;
+    map.occupied_thresh = occupied_thresh;
+    map.free_thresh = free_thresh;
 
-    map.data_ = this->get_data();
+    map.data = this->get_data();
     return map;
   }
 
@@ -71,11 +71,11 @@ public:
     std::cout << "Load map: " << yaml_path << std::endl;
 
     image_path = node["image"].as<std::string>();
-    resolution_ = node["resolution"].as<double>();
-    origin_ = node["origin"].as<std::vector<double>>();
-    negate_ = node["negate"].as<int>();
-    occupied_thresh_ = node["occupied_thresh"].as<double>();
-    free_thresh_ = node["free_thresh"].as<double>();
+    resolution = node["resolution"].as<double>();
+    origin = node["origin"].as<std::vector<double>>();
+    negate = node["negate"].as<int>();
+    occupied_thresh = node["occupied_thresh"].as<double>();
+    free_thresh = node["free_thresh"].as<double>();
 
     read_pgm();
   }
@@ -83,10 +83,10 @@ public:
 private:
   bool read_pgm()
   {
-    file_name_ = image_path;
-    file_name_ = "/home/lui/"+file_name_;
-    std::cout << "Load Image from: " << file_name_ << std::endl;
-    ifstream infile(file_name_);
+    file_name = image_path;
+    file_name = "/home/lui/"+file_name;
+    std::cout << "Load Image from: " << file_name << std::endl;
+    ifstream infile(file_name);
     stringstream ss;
     string inputLine = "";
     // First line : version
@@ -96,24 +96,24 @@ private:
       cerr << "Version error" << endl;
       return false;
     }
-    pgm_version_ = inputLine;
+    pgm_version = inputLine;
     getline(infile,inputLine);
     pgm_comment = inputLine;
     // Continue with a stringstream
     ss << infile.rdbuf();
     // Third line : size
-    ss >> width_ >>  height_ >> max_grayscale_value_;
-    data_ = new unsigned char*[height_];
-    for (int i = 0; i < height_; i++)
+    ss >> width >>  height >> max_grayscale_value;
+    data = new unsigned char*[height];
+    for (int i = 0; i < height; i++)
     {
-      data_[i] = new unsigned char[width_];
+      data[i] = new unsigned char[width];
     }
     // Following lines : data
-    for(int j=height_-1; j>=0; j--)
+    for(int j=height-1; j>=0; j--)
     {
-      for (int i= 0; i<width_; i++)
+      for (int i= 0; i<width; i++)
       {
-        ss >> data_[j][i];
+        ss >> data[j][i];
       }
     }
     infile.close();
@@ -126,23 +126,23 @@ private:
 
   // Map Data
   std::string image_path;
-  double resolution_;
-  std::vector<double> origin_;
-  int negate_;
-  double occupied_thresh_;
-  double free_thresh_;
-  int height_;
-	int width_;
-	unsigned char **data_;      // for storage the pixel value
+  double resolution;
+  std::vector<double> origin;
+  int negate;
+  double occupied_thresh;
+  double free_thresh;
+  int height;
+	int width;
+	unsigned char **data;      // for storage the pixel value
 
   // PGM
-  string pgm_version_;        // P2 or P5
+  string pgm_version;        // P2 or P5
   string pgm_comment;
-  string file_name_;
-  stringstream string_stream_;// Buffer, for storage the data after text header in pgm file
-  string input_line_;         // For storage data temporarily
-  ifstream infile_;           // Read pgm file
-  int max_grayscale_value_;
+  string file_name;
+  stringstream string_stream;// Buffer, for storage the data after text header in pgm file
+  string input_line;         // For storage data temporarily
+  ifstream infile;           // Read pgm file
+  int max_grayscale_value;
 
 };
 #endif
