@@ -11,23 +11,24 @@
 class ParticlesPublisher
 {
 public:
-    ParticlesPublisher()
+    ParticlesPublisher(){}
+    ~ParticlesPublisher(){}
+    void init()
     {
         particles_publisher = nh.advertise<geometry_msgs::PoseArray>("particles",1);
     }
-    ~ParticlesPublisher(){}
-    void generate_particles_msgs(vector<Pose> pAry)
+    void generate_particles_msgs(Particles particles)
     {
         particles_msgs.poses.clear();
         particles_msgs.header.frame_id = "map";
-        int p_num = pAry.size();
+        int p_num = particles.pAry.size();
         for(int i=0;i<p_num;i++)
         {
             geometry_msgs::Pose tmp_particle_pose;
-            tmp_particle_pose.position.x = pAry[i].x;
-            tmp_particle_pose.position.y = pAry[i].y;
+            tmp_particle_pose.position.x = particles.pAry[i].x;
+            tmp_particle_pose.position.y = particles.pAry[i].y;
             tf2::Quaternion myQuaternion;
-            myQuaternion.setRPY( 0, 0, pAry[i].yaw );
+            myQuaternion.setRPY( 0, 0, particles.pAry[i].yaw );
             tmp_particle_pose.orientation.x = myQuaternion.getX();
             tmp_particle_pose.orientation.y = myQuaternion.getY();
             tmp_particle_pose.orientation.z = myQuaternion.getZ();

@@ -17,17 +17,18 @@ double Particles::random_y(double y_max, double y_min)
 }
 double Particles::random_yaw(double yaw_max, double yaw_min)
 {
-    int range = (yaw_max-yaw_min)/pi*360;
-    double yaw = rand()%range*pi/360;
+    int range = (yaw_max-yaw_min)/M_PI*360;
+    double yaw = rand()%range*M_PI/360;
     yaw = yaw+yaw_min;
     return yaw;
 }
 
-void Particles::init_particles(int particles_number, 
-                                double x_max, double x_min, 
-                                double y_max, double y_min,
-                                double yaw_max, double yaw_min)
+void Particles::init(int particles_number, 
+                     double x_max, double x_min, 
+                     double y_max, double y_min,
+                     double yaw_max, double yaw_min)
 {
+    cout << "Initialize Particles!" << endl;
     srand(time(0));  // Initialize random number generator.
     pAry.clear();
     p_num = particles_number;
@@ -36,7 +37,7 @@ void Particles::init_particles(int particles_number,
         Pose tmp_pose;
         tmp_pose.x = random_x(x_max, x_min);
         tmp_pose.y = random_y(y_max, y_min);
-        if(trust_imu)
+        if(_TRUST_IMU)
         {
             tmp_pose.yaw = 0.0;
         }else{
@@ -46,8 +47,9 @@ void Particles::init_particles(int particles_number,
     }
 }
 
-void Particles::init_particles(int particles_number, double x, double y, double radius)
+void Particles::init(int particles_number, double x, double y, double radius)
 {
+    cout << "Initialize Particles!" << endl;
     srand(time(0));  // Initialize random number generator.
     pAry.clear();
     p_num = particles_number;
@@ -56,15 +58,22 @@ void Particles::init_particles(int particles_number, double x, double y, double 
         Pose tmp_pose;
         do
         {
-            tmp_pose.x = random_x(x+radius, x-radius);
-            tmp_pose.y = random_y(y+radius, y-radius);
+            if(_FOR_DEBUG)
+            {
+                tmp_pose.x = 0.0;
+                tmp_pose.y = 0.0;
+            }else{
+                tmp_pose.x = random_x(x+radius, x-radius);
+                tmp_pose.y = random_y(y+radius, y-radius);
+            }
+
         }while(hypot(tmp_pose.x,tmp_pose.y)>radius);
 
-        if(trust_imu)
+        if(_TRUST_IMU)
         {
             tmp_pose.yaw = 0.0;
         }else{
-            tmp_pose.yaw = random_yaw(pi, -pi);
+            tmp_pose.yaw = random_yaw(M_PI, -M_PI);
         }
         pAry.push_back(tmp_pose);
     }

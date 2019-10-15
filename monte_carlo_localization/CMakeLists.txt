@@ -27,13 +27,13 @@ include_directories(
 # link_directories(${catkin_LIBRARY_DIRS})
 
 # add_library(${PROJECT_NAME}_lib)
-# add_executable(particle_filter_node src/particle_filter_node.cpp src/particle_filter.cpp)
-# target_link_libraries(particle_filter_node
-#   yaml-cpp
-#   ${catkin_LIBRARIES}
-#   # ${PROJECT_NAME}_lib
-#   ${OpenCV_LIBS}
-# )
+add_executable(particle_filter_node src/particle_filter_node.cpp src/particle_filter.cpp src/particles.cpp)
+target_link_libraries(particle_filter_node
+  yaml-cpp
+  ${catkin_LIBRARIES}
+  # ${PROJECT_NAME}_lib
+  ${OpenCV_LIBS}
+)
 
 add_executable(test_particles_publisher src/test_particles_pub_main.cpp src/particles.cpp)
 target_link_libraries(test_particles_publisher
@@ -42,6 +42,12 @@ target_link_libraries(test_particles_publisher
 
 add_executable(test_move_particles src/test_move_particles.cpp src/particles.cpp)
 target_link_libraries(test_move_particles
+  ${catkin_LIBRARIES}
+)
+
+add_executable(test_scan_wall src/test_laser_wall_pub_main.cpp src/particles.cpp src/particle_filter.cpp)
+target_link_libraries(test_scan_wall
+  yaml-cpp
   ${catkin_LIBRARIES}
 )
 

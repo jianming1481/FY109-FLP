@@ -13,8 +13,8 @@ public:
     LaserScan(){}
     ~LaserScan(){}
 
-    std::vector<Vector2d> laser_wall;
     std::vector<double> data;
+    vector<Vector2d> scan_wall;
     double ranges;
     int sample_num;
 };

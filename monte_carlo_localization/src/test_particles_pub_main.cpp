@@ -5,12 +5,15 @@
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "particles_publisher");
-    Particles particles(200);
+    Particles particles;
     ParticlesPublisher pAry_pub;
+
+    particles.init(1);
+    pAry_pub.init();
 
     // particles.set_not_trust_imu();
     particles.set_trust_imu();
-    pAry_pub.generate_particles_msgs(particles.get_particles());
+    pAry_pub.generate_particles_msgs(particles());
     
     ros::Rate loop_rate(1);
     while (ros::ok())

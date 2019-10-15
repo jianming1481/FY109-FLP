@@ -15,15 +15,16 @@ using namespace std;
 class ROSSensorInterfaces
 {
 public:
-    ROSSensorInterfaces()
+    ROSSensorInterfaces(){}
+    ~ROSSensorInterfaces(){}
+
+    void init()
     {
         odom_sub = nh.subscribe<nav_msgs::Odometry>("odom", 1, &ROSSensorInterfaces::odomCallback, this);
         scan_sub = nh.subscribe<sensor_msgs::LaserScan> ("scan", 1, &ROSSensorInterfaces::scanCallback, this);
         // init_pose_sub = nh.subscribe<geometry_msgs::PoseWithCovarianceStamped> (
         //                     "initialpose", 1, &ROSSensorInterfaces::initPoseCallback, this);
     }
-    ~ROSSensorInterfaces(){}
-
     // void initPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr &initpose_in)
     // {
 
@@ -53,8 +54,8 @@ public:
         scan.data.clear();
         scan.ranges = scan_in->angle_max - scan_in->angle_min;
         // std::cout << "Hokuyo Send: " << scan_in->ranges.size() << std::endl;
-        int downsampling_param = 10;
-        scan.sample_num = scan_in->ranges.size()/downsampling_param;
+        int downsampling_param = 1;
+        scan.sample_num = scan_in->ranges.size()/(double)downsampling_param;
         // std::cout << "After downsampling: " << samples << std::endl;
 
         for(int i=0; i<scan.sample_num; i++)
@@ -62,7 +63,9 @@ public:
             scan.data.push_back(scan_in->ranges[downsampling_param*i]);
         }
     }
+
     LaserScan get_scan(){return scan;}
+    
     Vector3d get_displacement()
     {
         Robot tmp_robot;
