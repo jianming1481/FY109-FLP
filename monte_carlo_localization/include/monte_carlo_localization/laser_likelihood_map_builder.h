@@ -23,7 +23,7 @@ public:
         s=normal(0,50);
         normal_max_value = pdf(s,0);
 
-        range = 1; // How wide the likelihood filed should expand
+        range = 80; // How wide the likelihood filed should expand
     }
 	~LaserLikelihoodMapBuilder(){}
 
@@ -45,7 +45,7 @@ public:
     {
         std::cout << "Building likelihood map " << std::endl;
         
-        cv_likelihood_map = imread("/home/lui/likelihood_img.jpg", 0 );
+        cv_likelihood_map = imread("/home/lui/test_likelihood.jpg", 0 );
         if(!cv_likelihood_map.data)                                           // Haven't build likelihood map before
         {
             cout << "Haven't build likelihood map before, building likelihood map" << endl;

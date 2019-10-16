@@ -35,33 +35,41 @@ using namespace Eigen;
 class ParticleFilter
 {
 public:
+    // Initialize
     ParticleFilter(){}
     ~ParticleFilter(){}
-    
-    void init(string map_path="/home/lui/map.yaml", 
+    void init(string map_path="/home/lui/test.yaml", 
               int particle_number=200, 
               double init_x=0.0, 
               double init_y=0.0);
+
+    // Functions for algorithm
     bool input_scan(LaserScan scan_in);
-    void rate_particles();
-    void scan2wall_onMap();
-    
+    void scan2wall_onMap(double shift_x, double shift_y, double theta);
+    bool rate_particles();
+    void roulette_wheel_selection();
+
+    // Class Output
     vector<Vector2d> get_scan_wall_on_map(){return scan_wall_on_map;}
-    Particles get_particles(){return particles;}
-    LaserScan get_scan(){return scan;}
-    double get_scan_ranges(){return scan.ranges;}
+    Particles        get_particles(){return particles;}
+    LaserScan        get_scan(){return scan;}
+    double           get_scan_ranges(){return scan.ranges;}
+
 private:
+    // Input Sensors
     LaserScan scan;
+    vector<Vector2d> scan_wall_on_map;
     Odometry odom;
     ROSSensorInterfaces ros_sensor;
-    Particles particles;
-    Robot robot;
+    // Some Maps
     LaserMap map;
     LaserMapReader laser_map_reader;
     LaserLikelihoodMap likelihood_map;
     LaserLikelihoodMapBuilder likelihood_map_builder;
+    // Variables for particle filter
     Vector3d displacement;
-    vector<Vector2d> scan_wall_on_map;
+    Particles particles;
+    Robot robot;
 };
 
 #endif

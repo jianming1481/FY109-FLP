@@ -39,7 +39,7 @@ int main(int argc, char **argv)
         // publish scan wall after transfer to map
         if(pf.input_scan(ros_sensor.get_scan()))
         {
-            pf.scan2wall_onMap();
+            pf.scan2wall_onMap(pf.get_particles().pAry[0].x,pf.get_particles().pAry[0].y,pf.get_particles().pAry[0].yaw);
             // scan_pub.generate_scanMsg(pf.get_scan(), pf.get_particles());            // Generate scan wall on particle_0
             scan_pub.generate_scanMsg(pf.get_scan_wall_on_map(), pf.get_scan_ranges());                              // Generate scan wall mapping on map
 

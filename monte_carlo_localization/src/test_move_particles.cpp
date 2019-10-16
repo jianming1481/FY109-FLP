@@ -10,8 +10,9 @@ int main(int argc, char **argv)
     Particles particles;         // Input parameter is the amount of particles
     ParticlesPublisher pAry_pub;
 
-    particles.init(1);
+    int p_num = 1;
     ros_sensor.init();
+    particles.init(p_num);  // Generate 1 particle
     pAry_pub.init();
 
     // particles.set_not_trust_imu();
@@ -20,6 +21,7 @@ int main(int argc, char **argv)
     while (ros::ok())
     {
         particles.move_particle(ros_sensor.get_displacement());
+        ros_sensor.clean_displacement();
         pAry_pub.generate_particles_msgs(particles());
         pAry_pub.publish_msg();
         ros::spinOnce();

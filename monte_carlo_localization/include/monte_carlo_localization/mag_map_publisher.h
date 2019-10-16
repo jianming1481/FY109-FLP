@@ -13,7 +13,10 @@ using namespace std;
 class mag_map_publisher
 {
 public:
-    mag_map_publisher()
+    mag_map_publisher(){}
+    ~mag_map_publisher(){}
+
+    void init()
     {
         mag_map_x_publisher = nh.advertise<nav_msgs::OccupancyGrid>("magnetic_likelihood_map_x", 1);
         mag_map_y_publisher = nh.advertise<nav_msgs::OccupancyGrid>("magnetic_likelihood_map_y", 1);
@@ -23,8 +26,6 @@ public:
         mag_map_y_msg = generate_OccGridMapMsg(mag_data_zy);
         mag_map_z_msg = generate_OccGridMapMsg(mag_data_zz);
     }
-    ~mag_map_publisher(){}
-
     void read_magnetic_map()
     {
         csv_reader_.set_filename("/home/lui/catkin_ws/src/FY109-FLP/magnetic_map_data/ROS_msg/mag_pred_x.csv");

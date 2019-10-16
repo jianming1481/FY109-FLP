@@ -82,8 +82,8 @@ void Particles::init(int particles_number, double x, double y, double radius)
 vector<Vector2d> Particles::generate_displacement_noise()
 {
     double mean = 0.0;
-    double stddev_dist = 0.05;
-    double stddev_rot = 0.087266389;
+    double stddev_dist = 0.01;              // magic number
+    double stddev_rot = 0.017444444*2;      // magic number, please tune by yourself
     unsigned seed = chrono::system_clock::now().time_since_epoch().count();
     default_random_engine generator (seed);
     normal_distribution<double> dist_distribution(mean, stddev_dist);
@@ -101,20 +101,23 @@ vector<Vector2d> Particles::generate_displacement_noise()
 }
 void Particles::move_particle(Vector3d displacement)
 {
-    Vector2d move;                              // movement on x & y
     vector<Vector2d> G_noise;                           // Gaussian Noise for displacement and yaw rotate
-    double move_dist = displacement(0);
-    double rot=displacement(2);
-    double move_dir;
-    double move_dir_tmp = hypot(displacement(0), displacement(1));
-    // cout << "Move Particle X: " << displacement(0) << ", Yaw: " << displacement(2) << endl;
-
-    if(displacement(0)==0 && displacement(2)==0)
+    if(abs(displacement(0))<0.001 && abs(displacement(2)) < 0.001)
     {
+        // cout << "robot didn't move!" << endl;
+        // robot didn't move, don't add noise
         return;
     }else{
         G_noise = generate_displacement_noise();
     }
+    Vector2d move;                              // movement on x & y
+    double move_dist = displacement(0);
+    double rot=displacement(2);
+    double move_dir;
+    double move_dir_tmp = hypot(displacement(0), displacement(1));
+    cout << "Move Particle X: " << displacement(0) << ", Yaw: " << displacement(2) << endl;
+
+    
     for(int i=0;i<p_num;i++)
     {
         cout << "G_noise " << i << ": " << G_noise[i](0) << ", " << G_noise[i](1) << endl;

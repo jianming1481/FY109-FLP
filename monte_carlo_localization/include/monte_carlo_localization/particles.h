@@ -51,7 +51,8 @@ public:
 
     int p_num;
     double sumGrade;
-    double weight;
+    vector<double> weights;
+    double sumUp_weight;
     bool trust_imu;
     bool for_debug;         
     vector<Pose> pAry;
