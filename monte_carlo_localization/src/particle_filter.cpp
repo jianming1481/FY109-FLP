@@ -8,10 +8,8 @@
  */
 #include "monte_carlo_localization/particle_filter.h"
 
-void ParticleFilter::init(string map_path, int particles_number, double init_x, double init_y)
+void ParticleFilter::init(string map_path)
 {
-    // Initial ROS Sensor Communications
-    ros_sensor.init();
     // Load Map
     laser_map_reader.read_yaml(map_path);
     map = laser_map_reader.get_map();
@@ -24,8 +22,11 @@ void ParticleFilter::init(string map_path, int particles_number, double init_x, 
         cout << "NO Likelihood Map!" << endl;
         return;
     }
-    // Initial Particles
-    particles.init(particles_number, init_x, init_y);
+    x_max = likelihood_map.width*likelihood_map.resolution+likelihood_map.origin[0];
+    y_max = likelihood_map.height*likelihood_map.resolution+likelihood_map.origin[1];
+    x_min = likelihood_map.origin[0];
+    y_min = likelihood_map.origin[1];
+    cout << "ParticleFilter initialization done!" << endl;
 }
 
 void ParticleFilter::scan2wall_onMap(double shift_x, double shift_y, double theta)
@@ -54,7 +55,7 @@ void ParticleFilter::scan2wall_onMap(double shift_x, double shift_y, double thet
         MatrixXf scan_point_on_map(3,1);
         scan_point << scan.scan_wall[index_s](0), scan.scan_wall[index_s](1), 1;
         scan_point_on_map = rotate_matrix*scan_point;
-        scan_wall_on_map.push_back(Vector2d(scan_point_on_map(1,0), scan_point_on_map(0,0)));
+        scan_wall_on_map.push_back(Vector2d(scan_point_on_map(0,0), scan_point_on_map(1,0)));
     }
     if(scan_wall_on_map.empty())
     {
@@ -65,31 +66,37 @@ void ParticleFilter::scan2wall_onMap(double shift_x, double shift_y, double thet
 
 bool ParticleFilter::rate_particles()
 {
-    scan = ros_sensor.get_scan();
+    // cout << "Rating particles's weights!" << endl;
     if(scan.sample_num!=scan.data.size())
     {
-        cout << "ROS scan_msg goes wrong!!!" << endl;
+        cout << "ROS scan_msg goes wrong!" << endl;
         return false;
     }
-
+    if(particles.p_num!=particles.pAry.size())
+    {
+        cout << "Particles goes wrong!" << endl;
+        return false;
+    }
+    particles.weights.clear();
+    particles.sumUp_weight=0.0;
     for(int index_p=0; index_p<particles.p_num; index_p++)
     {
-        double tmp_weight=1;
+        double tmp_weight=1.0;
         double shift_x = particles.pAry[index_p].x;
         double shift_y = particles.pAry[index_p].y;
         double theta = particles.pAry[index_p].yaw;
-
         scan2wall_onMap(shift_x,shift_y,theta);
 
         for(int i=0;i<scan_wall_on_map.size();i++)
         {
-            int map_index_x = (int)(scan_wall_on_map[i](0)-likelihood_map.origin[0])/likelihood_map.resolution;   // change origin from vector to Vector3d
-            int map_index_y = (int)(scan_wall_on_map[i](1)-likelihood_map.origin[1])/likelihood_map.resolution;   // change origin from vector to Vector3d
+            int map_index_x = (int)((scan_wall_on_map[i](0)-likelihood_map.origin[0])/likelihood_map.resolution);   // change origin from vector to Vector3d
+            int map_index_y = (int)((scan_wall_on_map[i](1)-likelihood_map.origin[1])/likelihood_map.resolution);   // change origin from vector to Vector3d
+
             if(map_index_x>=0 && map_index_y>=0 && map_index_x<likelihood_map.width && map_index_y<likelihood_map.height)
             {
-                tmp_weight = tmp_weight*likelihood_map.data[map_index_x][map_index_y];
+                tmp_weight = tmp_weight*likelihood_map.data[map_index_y][map_index_x];
             }else{
-                tmp_weight = tmp_weight*0.01;
+                tmp_weight = tmp_weight*0.001;
             }
         }
         particles.sumUp_weight += tmp_weight;
@@ -100,31 +107,44 @@ bool ParticleFilter::rate_particles()
 
 void ParticleFilter::roulette_wheel_selection()
 {
-    double tmp_weight=0;
-    vector<Pose> new_pAry;
     // Re-calculate all particles's weights
-    for(int index_p=0; index_p<particles.p_num; index_p++)
+    // cout << "Selecting particles!" << endl;
+    if(particles.sumUp_weight==0.0)
     {
-        tmp_weight += particles.weights[index_p]/particles.sumUp_weight;
-        particles.weights[index_p] = tmp_weight;
+        particles.init(particles.p_num,x_max,x_min,y_max,y_min);
+        cout << "SUMUP_weight is ZERO" << endl;
+        return;
     }
 
+    double tmp_weight=0;
+    for(int index_p=0; index_p<particles.p_num; index_p++)
+    {
+        tmp_weight = tmp_weight + particles.weights[index_p]/particles.sumUp_weight;
+        // cout << index_p << ": " << tmp_weight << endl;
+        particles.weights[index_p] = tmp_weight;
+    }
+    vector<Pose> new_pAry;
     for(int index_p=0; index_p<particles.p_num; index_p++)
     {
         double tmp_sel = rand()%100;
         double sel = tmp_sel/100.0;
-
         for(int j=0; j<particles.p_num; j++)
         {
             if(sel < particles.weights[j])
             {
+                // cout << "random generate: " << sel << "===> select:" << j << endl;
                 new_pAry.push_back(particles.pAry[j]);
                 break;
             }
         }
     }
-    particles.pAry = new_pAry;
-
+    if(new_pAry.size()==particles.p_num)
+    {
+        particles.pAry = new_pAry;
+    }else{
+        cout << "New Particle size: " << new_pAry.size() << ". Not equal to old generation!" << endl;
+        return;
+    }
     double xSum=0;
     double ySum=0;
     double yawSum=0;
@@ -137,7 +157,7 @@ void ParticleFilter::roulette_wheel_selection()
     robot.pose.x = xSum/particles.p_num;
     robot.pose.y = ySum/particles.p_num;
     robot.pose.yaw = yawSum/particles.p_num;
-    cout << "Robot Pose: " << robot.pose.x << ", " << robot.pose.y << ", " << robot.pose.yaw << endl;
+    // cout << "Robot Pose: " << robot.pose.x << ", " << robot.pose.y << ", " << robot.pose.yaw << endl;
 }
 
 bool ParticleFilter::input_scan(LaserScan scan_in)
@@ -145,6 +165,17 @@ bool ParticleFilter::input_scan(LaserScan scan_in)
     scan = scan_in;
     if(scan.data.size()==scan.sample_num)
     {
+        return true;
+    }else{
+        return false;
+    }
+}
+
+bool ParticleFilter::input_particles(Particles particles_in)
+{
+    if(particles_in.p_num==particles_in.pAry.size())
+    {
+        particles = particles_in;
         return true;
     }else{
         return false;

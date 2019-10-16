@@ -20,10 +20,11 @@ public:
     LaserLikelihoodMapBuilder()
     {
         srand (time(NULL));
-        s=normal(0,50);
+        range = 80; // How wide the likelihood filed should expand
+
+        s=normal(0,range);
         normal_max_value = pdf(s,0);
 
-        range = 80; // How wide the likelihood filed should expand
     }
 	~LaserLikelihoodMapBuilder(){}
 
@@ -125,6 +126,7 @@ private:
                         }
                     }
                 }else if(laser_map.data[i][j] == 205){
+                    // likelihood_map.data[i][j] = 0.001;
                     if(likelihood_map.data[i][j] <= 0.001)
                     {
                         likelihood_map.data[i][j] = 0.0;
@@ -143,6 +145,7 @@ private:
                 likelihood_map.data[i][j] = cv_likelihood_map.data[i*mapW+j]/255.0;
             }
         }
+        // cout << "Likelihoodmap[10][10]: " << likelihood_map.data[10][10] << endl;
     }
 
     int range;

@@ -17,8 +17,8 @@ using namespace Eigen;
 
 #define _USE_MATH_DEFINES
 // #define M_PI 3.1415926
-#define _TRUST_IMU true     // Set all particle face to same direction
-#define _FOR_DEBUG true     // Set particle on (x=0.0, y=0.0, yaw=0.0)
+#define _TRUST_IMU false     // Set all particle face to same direction
+#define _FOR_DEBUG false     // Set particle on (x=0.0, y=0.0, yaw=0.0)
 
 class Particles
 {
@@ -31,14 +31,14 @@ public:
         init(number, x, y);
     }
 
-    void move_particle(Vector3d displacement);
+    void move_particles(Vector3d displacement);
     bool set_trust_imu(){trust_imu=true;}
     bool set_not_trust_imu(){trust_imu=false;}
     double random_x(double x_max, double x_min);
     double random_y(double y_max, double y_min);
     double random_yaw(double yaw_max, double yaw_min);
     double rand_Range();
-    vector<Vector2d> generate_displacement_noise();
+    vector<Vector2d> generate_displacement_noise(Vector3d displacement_in);
 
     void init(int particles_number, 
               double x_max, double x_min,

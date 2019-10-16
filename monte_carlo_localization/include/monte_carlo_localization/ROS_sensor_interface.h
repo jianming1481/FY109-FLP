@@ -55,8 +55,8 @@ public:
         scan.data.clear();
         scan.ranges = scan_in->angle_max - scan_in->angle_min;
         // std::cout << "Hokuyo Send: " << scan_in->ranges.size() << std::endl;
-        int downsampling_param = 1;
-        scan.sample_num = scan_in->ranges.size()/(double)downsampling_param;
+        int downsampling_param = 144;
+        scan.sample_num = (int)(scan_in->ranges.size()/downsampling_param);
         // std::cout << "After downsampling: " << samples << std::endl;
 
         for(int i=0; i<scan.sample_num; i++)
@@ -74,18 +74,24 @@ public:
         }
         double tmp_x = robot.odom.pose.x- robot.last_odom.pose.x;
         double tmp_y = robot.odom.pose.y- robot.last_odom.pose.y;
+        double tmp_yaw = robot.odom.pose.yaw - robot.last_odom.pose.yaw;
+
         double direction = atan2(tmp_y,tmp_x);
+        // cout << "direction: " << direction << endl;
+        // cout << "robot yaw: " <<robot.odom.pose.yaw << endl;
+        // cout << direction-robot.odom.pose.yaw << endl;
         double dist = hypot(tmp_x,tmp_y);
-        double robot_yaw = robot.odom.pose.yaw;
-        if(abs(direction - robot_yaw)<1.57)
+        if(abs(direction - robot.odom.pose.yaw)<1.57)
         {
             dist = dist*1;
         }else{
             dist = dist*-1;
         }
+ 
         displacement(0) = dist;
         displacement(1) = 0;
-        displacement(2) = (robot_yaw - robot.last_odom.pose.yaw);
+        displacement(2) = tmp_yaw;
+        // cout <<"Displacement: " << displacement <<endl;
     }
 
     Vector3d get_displacement()

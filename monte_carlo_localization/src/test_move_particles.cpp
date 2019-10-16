@@ -20,7 +20,7 @@ int main(int argc, char **argv)
     ros::Rate loop_rate(100);
     while (ros::ok())
     {
-        particles.move_particle(ros_sensor.get_displacement());
+        particles.move_particles(ros_sensor.get_displacement());
         ros_sensor.clean_displacement();
         pAry_pub.generate_particles_msgs(particles());
         pAry_pub.publish_msg();

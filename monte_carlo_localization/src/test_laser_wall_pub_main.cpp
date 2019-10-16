@@ -15,12 +15,14 @@ int main(int argc, char **argv)
     tf::Transform transform;
     tf::Quaternion q;
 
+    Particles particles;
     ParticleFilter pf;
     ROSSensorInterfaces ros_sensor;
     LaserScanWallPublisher scan_pub;
     ParticlesPublisher pAry_pub;
 
-    pf.init("/home/lui/map.yaml", 1);
+    particles.init(1);
+    pf.init("/home/lui/map.yaml");
     ros_sensor.init();
     scan_pub.init();
     pAry_pub.init();
@@ -28,6 +30,7 @@ int main(int argc, char **argv)
     ros::Rate loop_rate(100);
     while (ros::ok())
     {
+        pf.input_particles(particles);
         // broadcast tf to connect map and particle_0
         transform.setOrigin( tf::Vector3(pf.get_particles().pAry[0].x, 
                                          pf.get_particles().pAry[0].y, 

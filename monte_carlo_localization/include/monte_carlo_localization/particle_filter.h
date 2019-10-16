@@ -11,8 +11,6 @@
 
 // To Print something
 #include "iostream"
-// Connect with ROS
-#include "monte_carlo_localization/ROS_sensor_interface.h"
 
 // Some basic datatype for storage data
 #include "monte_carlo_localization/particles.h"
@@ -25,6 +23,7 @@
 #include "monte_carlo_localization/laser_likelihood_map.h"
 #include "monte_carlo_localization/laser_likelihood_map_builder.h"
 
+#include "monte_carlo_localization/robot.h"
 
 #include "eigen3/Eigen/Dense"
 #include <math.h>
@@ -38,13 +37,11 @@ public:
     // Initialize
     ParticleFilter(){}
     ~ParticleFilter(){}
-    void init(string map_path="/home/lui/test.yaml", 
-              int particle_number=200, 
-              double init_x=0.0, 
-              double init_y=0.0);
+    void init(string map_path="/home/lui/test.yaml");
 
     // Functions for algorithm
     bool input_scan(LaserScan scan_in);
+    bool input_particles(Particles particles_in);
     void scan2wall_onMap(double shift_x, double shift_y, double theta);
     bool rate_particles();
     void roulette_wheel_selection();
@@ -60,7 +57,6 @@ private:
     LaserScan scan;
     vector<Vector2d> scan_wall_on_map;
     Odometry odom;
-    ROSSensorInterfaces ros_sensor;
     // Some Maps
     LaserMap map;
     LaserMapReader laser_map_reader;
@@ -70,6 +66,7 @@ private:
     Vector3d displacement;
     Particles particles;
     Robot robot;
+    double x_max, y_max, x_min, y_min;
 };
 
 #endif

@@ -28,7 +28,7 @@ void Particles::init(int particles_number,
                      double y_max, double y_min,
                      double yaw_max, double yaw_min)
 {
-    cout << "Initialize Particles!" << endl;
+    cout << "Initialize " << particles_number << " Particles!" << endl;
     srand(time(0));  // Initialize random number generator.
     pAry.clear();
     p_num = particles_number;
@@ -49,7 +49,7 @@ void Particles::init(int particles_number,
 
 void Particles::init(int particles_number, double x, double y, double radius)
 {
-    cout << "Initialize Particles!" << endl;
+    cout << "Initialize " << particles_number << " Particles!" << endl;
     srand(time(0));  // Initialize random number generator.
     pAry.clear();
     p_num = particles_number;
@@ -77,13 +77,14 @@ void Particles::init(int particles_number, double x, double y, double radius)
         }
         pAry.push_back(tmp_pose);
     }
+    sumUp_weight = 0.0;
 }
 
-vector<Vector2d> Particles::generate_displacement_noise()
+vector<Vector2d> Particles::generate_displacement_noise(Vector3d displacement_in)
 {
     double mean = 0.0;
-    double stddev_dist = 0.01;              // magic number
-    double stddev_rot = 0.017444444*2;      // magic number, please tune by yourself
+    double stddev_dist = displacement_in(0);              // magic number
+    double stddev_rot = displacement_in(2)*2;      // magic number, please tune by yourself
     unsigned seed = chrono::system_clock::now().time_since_epoch().count();
     default_random_engine generator (seed);
     normal_distribution<double> dist_distribution(mean, stddev_dist);
@@ -99,28 +100,27 @@ vector<Vector2d> Particles::generate_displacement_noise()
     }
     return noise_vec;
 }
-void Particles::move_particle(Vector3d displacement)
+void Particles::move_particles(Vector3d displacement)
 {
+    // cout << "Move Particle X: " << displacement(0) << ", Yaw: " << displacement(2) << endl;
     vector<Vector2d> G_noise;                           // Gaussian Noise for displacement and yaw rotate
-    if(abs(displacement(0))<0.001 && abs(displacement(2)) < 0.001)
+    if(abs(displacement(0))<0.001 && abs(displacement(2)) < 0.0001)
     {
-        // cout << "robot didn't move!" << endl;
+        cout << "robot didn't move!" << endl;
         // robot didn't move, don't add noise
         return;
     }else{
-        G_noise = generate_displacement_noise();
+        G_noise = generate_displacement_noise(displacement);
     }
     Vector2d move;                              // movement on x & y
     double move_dist = displacement(0);
     double rot=displacement(2);
     double move_dir;
-    double move_dir_tmp = hypot(displacement(0), displacement(1));
-    cout << "Move Particle X: " << displacement(0) << ", Yaw: " << displacement(2) << endl;
-
+    double move_dir_tmp = displacement(0);
     
     for(int i=0;i<p_num;i++)
     {
-        cout << "G_noise " << i << ": " << G_noise[i](0) << ", " << G_noise[i](1) << endl;
+        // cout << "G_noise " << i << ": " << G_noise[i](0) << ", " << G_noise[i](1) << endl;
         move_dir = move_dir_tmp + pAry[i].yaw + G_noise[i](1);
         move(0) = (move_dist+G_noise[i](0))*cos(move_dir);
         move(1) = (move_dist+G_noise[i](0))*sin(move_dir);
