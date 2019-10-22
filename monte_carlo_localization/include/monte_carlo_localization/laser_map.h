@@ -21,7 +21,8 @@ public:
 	double resolution;
 	double free_thresh;
 	double occupied_thresh;
-
+	string map_path;
+	
     vector<double> origin;
 	vector<vector<double>> data;      // for storage the pixel value
 };

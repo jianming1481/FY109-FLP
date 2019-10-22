@@ -15,7 +15,7 @@ public:
     ~ParticlesPublisher(){}
     void init()
     {
-        particles_publisher = nh.advertise<geometry_msgs::PoseArray>("particles",1);
+        particles_publisher = nh.advertise<geometry_msgs::PoseArray>("myParticles",1);
     }
     void generate_particles_msgs(Particles particles)
     {

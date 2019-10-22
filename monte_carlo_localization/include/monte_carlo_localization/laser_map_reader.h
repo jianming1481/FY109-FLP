@@ -60,6 +60,8 @@ public:
     map.negate = negate;
     map.occupied_thresh = occupied_thresh;
     map.free_thresh = free_thresh;
+    size_t lastindex = image_path.find_last_of(".");
+    map.map_path = image_path.substr(0,lastindex);
 
     map.data = this->get_data();
     return map;
@@ -70,7 +72,10 @@ public:
     node = YAML::LoadFile(yaml_path);
     std::cout << "Load map: " << yaml_path << std::endl;
 
-    image_path = node["image"].as<std::string>();
+    size_t lastindex = yaml_path.find_last_of("."); 
+    string rawname = yaml_path.substr(0, lastindex); 
+
+    image_path = rawname;
     resolution = node["resolution"].as<double>();
     origin = node["origin"].as<std::vector<double>>();
     negate = node["negate"].as<int>();
@@ -84,9 +89,11 @@ private:
   bool read_pgm()
   {
     file_name = image_path;
-    file_name = "/home/lui/"+file_name;
-    std::cout << "Load Image from: " << file_name << std::endl;
-    ifstream infile(file_name);
+    string extension = ".pgm";
+
+    // file_name = "/home/lui/"+file_name;
+    std::cout << "Load Image from: " << file_name+extension << std::endl;
+    ifstream infile(file_name+extension);
     stringstream ss;
     string inputLine = "";
     // First line : version

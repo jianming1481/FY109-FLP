@@ -19,7 +19,7 @@ void ParticleFilter::init(string map_path)
     likelihood_map = likelihood_map_builder.get_likelihood_map();
     if(likelihood_map.data.empty())
     {
-        cout << "NO Likelihood Map!" << endl;
+        cerr << "NO Likelihood Map!" << endl;
         return;
     }
     x_max = likelihood_map.width*likelihood_map.resolution+likelihood_map.origin[0];
@@ -59,7 +59,7 @@ void ParticleFilter::scan2wall_onMap(double shift_x, double shift_y, double thet
     }
     if(scan_wall_on_map.empty())
     {
-        cout << "Laser Scan Wall EMPTY!" << endl;
+        cerr << "Laser Scan Wall EMPTY!" << endl;
         return;
     }
 }
@@ -69,12 +69,12 @@ bool ParticleFilter::rate_particles()
     // cout << "Rating particles's weights!" << endl;
     if(scan.sample_num!=scan.data.size())
     {
-        cout << "ROS scan_msg goes wrong!" << endl;
+        cerr << "ROS scan_msg goes wrong!" << endl;
         return false;
     }
     if(particles.p_num!=particles.pAry.size())
     {
-        cout << "Particles goes wrong!" << endl;
+        cerr << "Particles goes wrong!" << endl;
         return false;
     }
     particles.weights.clear();
@@ -111,18 +111,21 @@ void ParticleFilter::roulette_wheel_selection()
     // cout << "Selecting particles!" << endl;
     if(particles.sumUp_weight==0.0)
     {
-        particles.init(particles.p_num,x_max,x_min,y_max,y_min);
-        cout << "SUMUP_weight is ZERO" << endl;
+        particles.init_on_wholeMap(particles.p_num,x_max,x_min,y_max,y_min);
+        cerr << "SUMUP_weight is ZERO" << endl;
         return;
     }
 
     double tmp_weight=0;
+    particles.accumulated_weights.clear();
     for(int index_p=0; index_p<particles.p_num; index_p++)
     {
         tmp_weight = tmp_weight + particles.weights[index_p]/particles.sumUp_weight;
         // cout << index_p << ": " << tmp_weight << endl;
-        particles.weights[index_p] = tmp_weight;
+        particles.accumulated_weights.push_back(tmp_weight);
     }
+    // particles.sort_particles();
+    
     vector<Pose> new_pAry;
     for(int index_p=0; index_p<particles.p_num; index_p++)
     {
@@ -130,7 +133,7 @@ void ParticleFilter::roulette_wheel_selection()
         double sel = tmp_sel/100.0;
         for(int j=0; j<particles.p_num; j++)
         {
-            if(sel < particles.weights[j])
+            if(sel < particles.accumulated_weights[j])
             {
                 // cout << "random generate: " << sel << "===> select:" << j << endl;
                 new_pAry.push_back(particles.pAry[j]);
@@ -142,22 +145,29 @@ void ParticleFilter::roulette_wheel_selection()
     {
         particles.pAry = new_pAry;
     }else{
-        cout << "New Particle size: " << new_pAry.size() << ". Not equal to old generation!" << endl;
+        cerr << "New Particle size: " << new_pAry.size() << ". Not equal to old generation!" << endl;
         return;
     }
     double xSum=0;
     double ySum=0;
+    double sum_sin=0.0;
+    double sum_cos=0.0;
     double yawSum=0;
-    for(int index_p=0; index_p<particles.p_num; index_p++)
+    int compensate_num = 0;
+    for(int index_p=particles.p_num; index_p>0; --index_p)
     {
         xSum+=particles.pAry[index_p].x;
         ySum+=particles.pAry[index_p].y;
-        yawSum+=particles.pAry[index_p].yaw;
+        sum_sin += sin(particles.pAry[index_p].yaw);
+        sum_cos += cos(particles.pAry[index_p].yaw);
     }
     robot.pose.x = xSum/particles.p_num;
     robot.pose.y = ySum/particles.p_num;
-    robot.pose.yaw = yawSum/particles.p_num;
-    // cout << "Robot Pose: " << robot.pose.x << ", " << robot.pose.y << ", " << robot.pose.yaw << endl;
+    sum_sin = sum_sin/particles.p_num;
+    sum_cos = sum_cos/particles.p_num;
+    robot.pose.yaw = atan2(sum_sin, sum_cos);
+
+    cout << "Robot Pose: " << robot.pose.x << ", " << robot.pose.y << ", " << robot.pose.yaw << endl;
 }
 
 bool ParticleFilter::input_scan(LaserScan scan_in)

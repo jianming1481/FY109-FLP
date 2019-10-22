@@ -20,7 +20,7 @@ public:
     LaserLikelihoodMapBuilder()
     {
         srand (time(NULL));
-        range = 80; // How wide the likelihood filed should expand
+        range = 20; // How wide the likelihood filed should expand
 
         s=normal(0,range);
         normal_max_value = pdf(s,0);
@@ -45,8 +45,10 @@ public:
     void build_likelihood_map(LaserMap map)
     {
         std::cout << "Building likelihood map " << std::endl;
-        
-        cv_likelihood_map = imread("/home/lui/test_likelihood.jpg", 0 );
+        string extension = ".jpg";
+        string path = map.map_path+extension;
+        cout << "Loading " << path << "..." << endl;
+        cv_likelihood_map = imread(path, 0 );
         if(!cv_likelihood_map.data)                                           // Haven't build likelihood map before
         {
             cout << "Haven't build likelihood map before, building likelihood map" << endl;
@@ -61,8 +63,10 @@ public:
 
     LaserLikelihoodMap get_likelihood_map(){return likelihood_map;}
     void save_cv_likelihood_map(){        
-        flip(cv_likelihood_map,cv_likelihood_map, 0);
-        imwrite("/home/lui/test_likelihood.jpg", cv_likelihood_map);
+        // flip(cv_likelihood_map,cv_likelihood_map, 0);
+        string extension = ".jpg";
+        string path = laser_map.map_path+extension;
+        imwrite(path, cv_likelihood_map);
     }
 
 private:

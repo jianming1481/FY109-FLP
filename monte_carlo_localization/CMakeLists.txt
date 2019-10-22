@@ -51,6 +51,13 @@ target_link_libraries(test_scan_wall
   ${catkin_LIBRARIES}
 )
 
+# add_executable(test_scan_wall src/test_laser_wall_pub_main.cpp src/particles.cpp src/particle_filter.cpp)
+# target_link_libraries(test_scan_wall
+#   yaml-cpp
+#   ${catkin_LIBRARIES}
+# )
+
+
 # add_executable(test_csv_reader src/test_CSV_main.cpp)
 # target_link_libraries(test_csv_reader
 #   ${catkin_LIBRARIES}

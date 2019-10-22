@@ -7,4 +7,5 @@ monte_carlo_localization/build/
 .settings/
 *.vscode
 *.txt.user
+*.bag
 

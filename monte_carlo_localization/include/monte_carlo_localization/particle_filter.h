@@ -47,11 +47,12 @@ public:
     void roulette_wheel_selection();
 
     // Class Output
-    vector<Vector2d> get_scan_wall_on_map(){return scan_wall_on_map;}
-    Particles        get_particles(){return particles;}
-    LaserScan        get_scan(){return scan;}
-    double           get_scan_ranges(){return scan.ranges;}
-
+    vector<Vector2d>   get_scan_wall_on_map(){return scan_wall_on_map;}
+    Particles          get_particles(){return particles;}
+    LaserScan          get_scan(){return scan;}
+    double             get_scan_ranges(){return scan.ranges;}
+    LaserLikelihoodMap get_likelihood_map(){return likelihood_map;}
+    Robot              get_robot(){return robot;}
 private:
     // Input Sensors
     LaserScan scan;

@@ -20,7 +20,6 @@ import matplotlib.pyplot as plt
 import time
 
 global mag_data
-mag_data = [0.0, 0.0, 0.0]
 global mag_map
 global mag_map_x
 global mag_map_y
@@ -53,9 +52,11 @@ def calc_p2p_dist(x1, y1, x2, y2):
     
 def mag_CB(data):
     global mag_data
+    mag_data = [0.0, 0.0, 0.0]
     mag_data[0] = data.magnetic_field.x
     mag_data[1] = data.magnetic_field.y
     mag_data[2] = data.magnetic_field.z
+    # print('x: '+mag_data[0]+', y:'+mag_data[1]+', z:'+mag_data[2])
     
 def handle_save_img(req):
     cv2.imwrite('mag_map.png',mag_map)
@@ -72,7 +73,7 @@ if __name__ == '__main__':
     map_origin = [0.0, 0.0, 0.0]
     map_resolution = 0.0;
     
-    map_name = 'itri_lab_R2S03'
+    map_name = 'map_r1'
     # Read YAML
     stream = open(map_name+'.yaml', "r")
     docs = yaml.load_all(stream)
@@ -87,7 +88,7 @@ if __name__ == '__main__':
     image = read_pgm(map_name+".pgm", byteorder='<')
     
     # Generate Mag Map
-    mag_map_resolution = 0.5
+    mag_map_resolution = 0.05
     height = int(image.shape[0]*map_resolution/mag_map_resolution)
     width = int(image.shape[1]*map_resolution/mag_map_resolution)
     mag_map = np.zeros((height, width, 3))
@@ -117,7 +118,7 @@ if __name__ == '__main__':
     
     while not rospy.is_shutdown():
         try:
-            (trans,rot) = listener.lookupTransform('/map', '/base_link', rospy.Time(0))
+            (trans,rot) = listener.lookupTransform('/map', '/gyro_link', rospy.Time(0))
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             continue
 

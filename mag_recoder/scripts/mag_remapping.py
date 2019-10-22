@@ -4,8 +4,9 @@ import roslib
 roslib.load_manifest('mag_recoder')
 import rospy
 import tf
-from sensor_msgs.msg import MagneticField
 from sensor_msgs.msg import Imu
+from sensor_msgs.msg import MagneticField
+from geometry_msgs.msg import Vector3Stamped
 
 # Utils
 import math
@@ -18,9 +19,9 @@ theta = 0.0
 
 def mag_CB(data):
     global mag_data
-    mag_data[0] = data.magnetic_field.x
-    mag_data[1] = data.magnetic_field.y
-    mag_data[2] = data.magnetic_field.z
+    mag_data[0] = data.vector.x
+    mag_data[1] = data.vector.y
+    mag_data[2] = data.vector.z
 
 def imu_CB(data):
     global imu_orientation_data
@@ -34,9 +35,9 @@ def imu_CB(data):
     
 if __name__ == '__main__':
     # Start ROS Node
-    rospy.init_node('mag_recoder')
+    rospy.init_node('mag_remapper')
     listener = tf.TransformListener()
-    rospy.Subscriber("imu/mag",MagneticField, mag_CB)
+    rospy.Subscriber("imu/mag",Vector3Stamped, mag_CB)
     rospy.Subscriber("imu/data",Imu, imu_CB)
     pub = rospy.Publisher('m_mag', MagneticField, queue_size=1)
     rate = rospy.Rate(10) # 10hz

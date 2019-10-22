@@ -23,13 +23,23 @@ public:
         odom_sub = nh.subscribe<nav_msgs::Odometry>("odom", 1, &ROSSensorInterfaces::odomCallback, this);
         scan_sub = nh.subscribe<sensor_msgs::LaserScan> ("scan", 1, &ROSSensorInterfaces::scanCallback, this);
         init_flag = true;
-        // init_pose_sub = nh.subscribe<geometry_msgs::PoseWithCovarianceStamped> (
-        //                     "initialpose", 1, &ROSSensorInterfaces::initPoseCallback, this);
+        pose_estimation_flag = false;
+        init_pose_sub = nh.subscribe<geometry_msgs::PoseWithCovarianceStamped> (
+                            "initialpose", 1, &ROSSensorInterfaces::initPoseCallback, this);
     }
-    // void initPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr &initpose_in)
-    // {
-
-    // }
+    void initPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr &initpose_in)
+    {
+        cout << "Received initial signal!" << endl;
+        pose_estimation_flag = true;
+        init_flag = true;
+        init_pose(0) = initpose_in->pose.pose.position.x;
+        init_pose(1) = initpose_in->pose.pose.position.y;
+        tf::Quaternion quat;
+        tf::quaternionMsgToTF(initpose_in->pose.pose.orientation , quat);
+        double roll, pitch, yaw;
+        tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
+        init_pose(2) = yaw;
+    }
 
     void odomCallback(const nav_msgs::Odometry::ConstPtr& odom_in)
     {
@@ -47,6 +57,11 @@ public:
         robot.odom.twist.linear.x = odom_in->twist.twist.linear.x;
         robot.odom.twist.linear.y = odom_in->twist.twist.linear.y;
         robot.odom.twist.angular.yaw = odom_in->twist.twist.angular.z;
+        if(init_flag)
+        {
+            robot.last_odom.pose = robot.odom.pose;
+            init_flag = false;
+        }
         calculate_displacement();
     }
 
@@ -67,11 +82,6 @@ public:
 
     void calculate_displacement()
     {
-        if(init_flag)
-        {
-            robot.last_odom.pose = robot.odom.pose;
-            init_flag = false;
-        }
         double tmp_x = robot.odom.pose.x- robot.last_odom.pose.x;
         double tmp_y = robot.odom.pose.y- robot.last_odom.pose.y;
         double tmp_yaw = robot.odom.pose.yaw - robot.last_odom.pose.yaw;
@@ -121,6 +131,9 @@ public:
         robot_in.last_odom = robot.last_odom;
         return robot;
     }
+    bool init_flag;
+    bool pose_estimation_flag;
+    Vector3d init_pose;
 private:
     ros::NodeHandle nh;
     ros::Subscriber scan_sub;
@@ -130,7 +143,6 @@ private:
     Vector3d displacement;
     LaserScan scan;
     Robot robot;
-    bool init_flag;
 };
 
 #endif

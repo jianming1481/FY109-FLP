@@ -1,24 +1,30 @@
 #include "ros/ros.h"
 #include "monte_carlo_localization/robot.h"
+#include "monte_carlo_localization/robot_pose_publisher.h"
 #include "monte_carlo_localization/particles.h"
 #include "monte_carlo_localization/particle_filter.h"
 #include "monte_carlo_localization/particles_publisher.h"
 #include "monte_carlo_localization/ROS_sensor_interface.h"
+#include "monte_carlo_localization/laser_likelihood_map_publisher.h"
 
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "my_mcl");
     Robot robot;
+    RobotPosePublisher robot_pose_pub;
     Vector3d displacement;
     Particles particles;
     ParticleFilter pf;
     ParticlesPublisher pAry_pub;
     ROSSensorInterfaces ros_sensor;
-
+    LaserLikelihoodMapPublisher likelihood_map_publisher;
     // Initial ROS Sensor Communications
     ros_sensor.init();
+
     // Initial Particles
-    particles.init(200);
+    int pNum = 1000;
+    particles.init(pNum);
+    
     // Input map to initial ParticleFilter
     if (argc < 2)
     {
@@ -27,11 +33,16 @@ int main(int argc, char **argv)
     }else{
         pf.init(argv[1]);
     }
-    pAry_pub.init();
     
+    pAry_pub.init();
+    robot_pose_pub.init();
+
+    likelihood_map_publisher.generate_OccGridMapMsg(pf.get_likelihood_map());
+
     ros::Rate loop_rate(40);
     while (ros::ok())
     {
+        likelihood_map_publisher.publish_map();
         robot = ros_sensor.get_robot_odom(robot);
         displacement = ros_sensor.get_displacement();
         if(abs(displacement(0))>0.05 || abs(displacement(2))>0.01745)
@@ -40,15 +51,32 @@ int main(int argc, char **argv)
             ros_sensor.clean_displacement();
             if(pf.input_scan(ros_sensor.get_scan())&&pf.input_particles(particles))
             {
-                if(pf.rate_particles())
-                {
-                    pf.roulette_wheel_selection();
-                    particles = pf.get_particles();
-                }
+                // int iterator = 0;
+                // while(iterator<5)
+                // {
+                    if(pf.rate_particles())
+                    {
+                        pf.roulette_wheel_selection();
+                        particles = pf.get_particles();
+                        pAry_pub.generate_particles_msgs(particles());
+                        pAry_pub.publish_msg();
+                        robot_pose_pub.generate_robot_pose_msgs(pf.get_robot());
+                        robot_pose_pub.publish_msgs();
+                    }
+                    // iterator++;
+                // }
             }
+        }
+        if(ros_sensor.pose_estimation_flag)
+        {
+            particles.init(pNum, ros_sensor.init_pose(0), ros_sensor.init_pose(1), ros_sensor.init_pose(2));
+            ros_sensor.pose_estimation_flag = false;
+            ros_sensor.init_flag = false;
         }
         pAry_pub.generate_particles_msgs(particles());
         pAry_pub.publish_msg();
+        robot_pose_pub.generate_robot_pose_msgs(pf.get_robot());
+        robot_pose_pub.publish_msgs();
         ros::spinOnce();
         loop_rate.sleep();
     }

@@ -17,13 +17,13 @@ double Particles::random_y(double y_max, double y_min)
 }
 double Particles::random_yaw(double yaw_max, double yaw_min)
 {
-    int range = (yaw_max-yaw_min)/M_PI*360;
-    double yaw = rand()%range*M_PI/360;
+    int range = (yaw_max-yaw_min)/M_PI*180;
+    double yaw = rand()%range*M_PI/180;
     yaw = yaw+yaw_min;
     return yaw;
 }
 
-void Particles::init(int particles_number, 
+void Particles::init_on_wholeMap(int particles_number, 
                      double x_max, double x_min, 
                      double y_max, double y_min,
                      double yaw_max, double yaw_min)
@@ -37,22 +37,20 @@ void Particles::init(int particles_number,
         Pose tmp_pose;
         tmp_pose.x = random_x(x_max, x_min);
         tmp_pose.y = random_y(y_max, y_min);
-        if(_TRUST_IMU)
-        {
-            tmp_pose.yaw = 0.0;
-        }else{
-            tmp_pose.yaw = random_yaw(yaw_max, yaw_min);
-        }
+        tmp_pose.yaw = random_yaw(yaw_max, yaw_min);
+
         pAry.push_back(tmp_pose);
     }
+    cout << "Initial done!" << endl;
 }
 
-void Particles::init(int particles_number, double x, double y, double radius)
+void Particles::init(int particles_number, double x, double y, double yaw, double radius)
 {
     cout << "Initialize " << particles_number << " Particles!" << endl;
     srand(time(0));  // Initialize random number generator.
     pAry.clear();
     p_num = particles_number;
+    double dist=0;
     for(int i=0;i<p_num;i++)
     {
         Pose tmp_pose;
@@ -66,25 +64,28 @@ void Particles::init(int particles_number, double x, double y, double radius)
                 tmp_pose.x = random_x(x+radius, x-radius);
                 tmp_pose.y = random_y(y+radius, y-radius);
             }
-
-        }while(hypot(tmp_pose.x,tmp_pose.y)>radius);
-
-        if(_TRUST_IMU)
+            dist = hypot((tmp_pose.x-x),(tmp_pose.y-y));
+            // cout << i << " => dist: " << dist << " => radius: " << radius << endl;
+        }while(dist > radius);
+        if(yaw==0.0)
         {
             tmp_pose.yaw = 0.0;
+        }else if(yaw!=0.0 && _TRUST_IMU){
+            tmp_pose.yaw =yaw;
         }else{
             tmp_pose.yaw = random_yaw(M_PI, -M_PI);
         }
         pAry.push_back(tmp_pose);
     }
     sumUp_weight = 0.0;
+    cout << "Initial particles done!" << endl;
 }
 
 vector<Vector2d> Particles::generate_displacement_noise(Vector3d displacement_in)
 {
     double mean = 0.0;
-    double stddev_dist = displacement_in(0);              // magic number
-    double stddev_rot = displacement_in(2)*2;      // magic number, please tune by yourself
+    double stddev_dist = displacement_in(0)+0.01;              // magic number
+    double stddev_rot = displacement_in(2)*2+0.017453278;      // magic number, please tune by yourself
     unsigned seed = chrono::system_clock::now().time_since_epoch().count();
     default_random_engine generator (seed);
     normal_distribution<double> dist_distribution(mean, stddev_dist);
@@ -127,6 +128,31 @@ void Particles::move_particles(Vector3d displacement)
         pAry[i].x += move(0) ;
         pAry[i].y += move(1) ;
         pAry[i].yaw += rot+G_noise[i](1);
+        if(pAry[i].yaw>M_PI)
+            pAry[i].yaw -= 2*M_PI;
+        // if(pAry[i].yaw<-M_PI)
+        //     pAry[i].yaw += 2*M_PI;
+        while(pAry[i].yaw < 0){
+            pAry[i].yaw += 2*M_PI;
+        }
     }
+}
 
+void Particles::sort_particles()
+{
+    for(int i=p_num;i>0;--i)
+    {
+        for(int j=0;j<i;j++)
+        {
+            if(weights[j]>weights[j+1])
+            {
+                swap(pAry[j], pAry[j+1]);
+                swap(weights[j], weights[j+1]);
+            }
+        }
+    }
+    for(int i=0; i<p_num;i++)
+    {
+        // cout << i << ": " << weights[i]<<endl;
+    }
 }

@@ -21,7 +21,7 @@ private:
 public:
     LaserLikelihoodMapPublisher()
     {
-        publisher = nh_.advertise<nav_msgs::OccupancyGrid>("laser_likelihood_map", 1);
+        publisher = nh.advertise<nav_msgs::OccupancyGrid>("laser_likelihood_map", 1);
     }
     ~LaserLikelihoodMapPublisher(){}
     void publish_map()
