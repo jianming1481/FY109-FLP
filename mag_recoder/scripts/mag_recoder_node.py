@@ -91,6 +91,7 @@ if __name__ == '__main__':
     mag_map_resolution = 0.05
     height = int(image.shape[0]*map_resolution/mag_map_resolution)
     width = int(image.shape[1]*map_resolution/mag_map_resolution)
+    bool_mag_map = np.zeros((height,width))
     mag_map = np.zeros((height, width, 3))
     mag_map_x = np.zeros((height,width,1))
     mag_map_y = np.zeros((height,width,1))
@@ -134,11 +135,14 @@ if __name__ == '__main__':
             mag_map[x][y][1] = mag_map[x][y][0]
             mag_map[x][y][2] = mag_map[x][y][0]
             
-            mag_map_x[x][y] = mag_data[0]
-            mag_map_y[x][y] = mag_data[1]
-            mag_map_z[x][y] = mag_data[2]
+            if abs(mag_data[0]) > abs(mag_map_x[x][y]):
+                mag_map_x[x][y] = mag_data[0]
+            if abs(mag_data[1]) > abs(mag_map_y[x][y]):
+                mag_map_y[x][y] = mag_data[1]
+            if abs(mag_data[2]) > abs(mag_map_z[x][y]):
+                mag_map_z[x][y] = mag_data[2]
 
-            print("(X: %(x)s, Y: %(y)s) = %(value)s" % {'x': x, 'y': y, 'value': mag_map[x][y]})
+            print("(X: %(x)s, Y: %(y)s) = %(value)s" % {'x': x, 'y': y, 'value': mag_map_x[x][y]})
         
         show_mag_map = cv2.flip(mag_map, 0)
         gray = cv2.cvtColor(show_mag_map.astype(np.uint8), cv2.COLOR_BGR2GRAY)
