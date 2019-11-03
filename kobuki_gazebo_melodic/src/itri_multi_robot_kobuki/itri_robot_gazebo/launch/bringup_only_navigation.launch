@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="base"      value="$(optenv TURTLEBOT_BASE kobuki)"/> <!-- create, roomba -->
+  <arg name="battery"   value="$(optenv TURTLEBOT_BATTERY /proc/acpi/battery/BAT0)"/>  <!-- /proc/acpi/battery/BAT0 --> 
+  <arg name="stacks"    value="$(optenv TURTLEBOT_STACKS hexagons)"/>  <!-- circles, hexagons --> 
+  <arg name="3d_sensor" value="$(optenv TURTLEBOT_3D_SENSOR kinect)"/>  <!-- kinect, asus_xtion_pro --> 
+  <arg name="model"     default="$(find itri_robot_gazebo)/urdf/wallworld.urdf.xacro"/>
+
+  <arg name="initial_pose_x" value="0.0"/>
+  <arg name="initial_pose_y" value="0.0"/>
+  <arg name="initial_pose_z" value="0.0"/>
+  <arg name="initial_pose_a" default="0.0"/>
+
+  <param name="/use_sim_time" value="true" />
+  
+  <!-- robot_pose_ekf -->
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se" clear_params="true">
+    <rosparam command="load" file="$(find kobuki_navigation)/param/itri_turtlebot_ekf.yaml" />
+    <!-- <remap from="odometry/filtered" to="odom"/> -->
+  </node>
+
+  <!-- JOY Stick -->
+  <!-- <include file="$(find teleop_twist_joy)/launch/teleop.launch" /> -->
+
+  <!-- Map server -->
+  <arg name="map_file" default="/home/lui/itri_space.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+  <!-- AMCL -->
+  <arg name="custom_amcl_launch_file" default="$(find kobuki_navigation)/launch/includes/amcl.launch.xml"/>
+
+  <include file="$(arg custom_amcl_launch_file)">
+      <arg name="robot_name"     value="itri-agv" />
+      <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
+      <arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
+      <arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
+      <!-- <remap from="odom" to="odometry/filtered"/> -->
+  </include>
+
+  <!-- Move base -->
+  <arg name="custom_param_file" default="$(find kobuki_navigation)/param/costmap_common_params.yaml"/>
+  <include file="$(find kobuki_navigation)/launch/includes/move_base.launch.xml">
+      <arg name="robot_name"     value="itri-agv" />
+      <arg name="custom_param_file" value="$(arg custom_param_file)"/>
+      <arg name="global_frame_id"   value="map" />
+  </include>
+</launch>

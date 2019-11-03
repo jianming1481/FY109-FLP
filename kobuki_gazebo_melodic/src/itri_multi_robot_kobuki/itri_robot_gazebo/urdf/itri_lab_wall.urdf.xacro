@@ -1,0 +1,707 @@
+<?xml version="1.0"?>
+<robot name="macroed" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:property name="width" value="0.2" />
+  <xacro:property name="wall_thickness" value="0.04" />
+  <xacro:property name="wall_750_leglen" value="${0.75+wall_thickness*2}" />
+  <xacro:property name="wall_250_leglen" value="${0.25+wall_thickness*2}" />
+  <xacro:property name="wall_1250_leglen" value="${1.25+wall_thickness*2}" />
+  <xacro:property name="wall_H_1250_leglen" value="${1.25+wall_thickness/2}" />
+  <xacro:property name="wall_1000_leglen" value="${1+wall_thickness*2}" />
+  <xacro:property name="wall_2000_leglen" value="${2+wall_thickness*2}" />
+  <xacro:property name="wall_5000_leglen" value="${5+wall_thickness*2}" />
+  <xacro:property name="wall_6000_leglen" value="${6+wall_thickness*3}" />
+  <xacro:property name="pi" value="3.1415" />
+
+  <xacro:macro name="default_inertial" params="mass">
+    <inertial>
+      <mass value="${mass}" />
+      <inertia ixx="100.0" ixy="100.0" ixz="100.0" iyy="100.0" iyz="100.0" izz="100.0" />
+    </inertial>
+  </xacro:macro>
+ 
+  <link name="wall_A_1250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_1250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${wall_1250_leglen/2} 0 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_1250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${wall_1250_leglen/2} 0 0" rpy="0 ${pi/2} ${pi/2}"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_A_750">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_750_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_750_leglen/2} ${wall_thickness/2+2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_750_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_750_leglen/2} ${wall_thickness/2+2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+
+  <link name="wall_A1_250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_A2_250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="wall_A_1" type="fixed">
+    <parent link="wall_A_750"/>
+    <child link="wall_A1_250"/>
+    <origin xyz="${wall_thickness/2} ${wall_250_leglen/2+2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_A_2" type="fixed">
+    <parent link="wall_A1_250"/>
+    <child link="wall_A_1250"/>
+    <origin xyz="${-wall_thickness-wall_thickness/2} ${wall_250_leglen/2-wall_thickness/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_A_3" type="fixed">
+    <parent link="wall_A_750"/>
+    <child link="wall_A2_250"/>
+    <origin xyz="${-wall_750_leglen+wall_thickness*3/2} ${wall_250_leglen/2+2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="wall_B1_250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_B2_250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_B_750">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_750_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_750_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_750_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_750_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_B_1250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_1250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${wall_1250_leglen/2} 0 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_1250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${wall_1250_leglen/2} 0 0" rpy="0 ${pi/2} ${pi/2}"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="wall_B_1" type="fixed">
+    <parent link="wall_A_1250"/>
+    <child link="wall_B1_250"/>
+    <origin xyz="${wall_1250_leglen+wall_thickness/2} ${-wall_250_leglen/2+wall_thickness/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_B_2" type="fixed">
+    <parent link="wall_B1_250"/>
+    <child link="wall_B_750"/>
+    <origin xyz="${wall_750_leglen-wall_thickness*3/2} ${-wall_250_leglen/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_B_3" type="fixed">
+    <parent link="wall_B_750"/>
+    <child link="wall_B2_250"/>
+    <origin xyz="${wall_thickness/2} ${wall_250_leglen/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_B_4" type="fixed">
+    <parent link="wall_B2_250"/>
+    <child link="wall_B_1250"/>
+    <origin xyz="${-wall_thickness} ${wall_250_leglen/2-wall_thickness/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="wall_C1_250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_C2_250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_C_750">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_750_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_750_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_750_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_750_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_C_1000">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_1000_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${wall_1000_leglen/2} 0 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_1000_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${wall_1000_leglen/2} 0 0" rpy="0 ${pi/2} ${pi/2}"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="wall_C_1" type="fixed">
+    <parent link="wall_B_1250"/>
+    <child link="wall_C1_250"/>
+    <origin xyz="${wall_1250_leglen+wall_thickness/2} ${-wall_250_leglen/2+wall_thickness/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_C_2" type="fixed">
+    <parent link="wall_C1_250"/>
+    <child link="wall_C_750"/>
+    <origin xyz="${wall_750_leglen-wall_thickness*3/2} ${-wall_250_leglen/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_C_3" type="fixed">
+    <parent link="wall_C_750"/>
+    <child link="wall_C2_250"/>
+    <origin xyz="${wall_thickness/2} ${wall_250_leglen/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_C_4" type="fixed">
+    <parent link="wall_C2_250"/>
+    <child link="wall_C_1000"/>
+    <origin xyz="${-wall_thickness-wall_thickness/2} ${wall_250_leglen/2-wall_thickness/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="wall_D1_1000">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_1000_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_1000_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_D2_1000">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_1000_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_1000_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_1000_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_1000_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_D_1250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_1250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_1250_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_1250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_1250_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_D_5000">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_5000_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_5000_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="wall_D_1" type="fixed">
+    <parent link="wall_C_1000"/>
+    <child link="wall_D1_1000"/>
+    <origin xyz="${wall_1000_leglen+wall_thickness/2} ${-wall_1000_leglen/2+wall_thickness/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_D_2" type="fixed">
+    <parent link="wall_D1_1000"/>
+    <child link="wall_D2_1000"/>
+    <origin xyz="${wall_1000_leglen-wall_thickness*3/2} ${-wall_1000_leglen/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_D_3" type="fixed">
+    <parent link="wall_D2_1000"/>
+    <child link="wall_D_5000"/>
+    <origin xyz="${wall_thickness/2} ${-wall_5000_leglen/2+wall_thickness} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_D_4" type="fixed">
+    <parent link="wall_D_5000"/>
+    <child link="wall_D_1250"/>
+    <origin xyz="${-wall_thickness/2} ${-wall_5000_leglen/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="wall_E1_250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_E2_250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_E_1250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_1250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_1250_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_1250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_1250_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_E_750">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_750_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_750_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_750_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_750_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="wall_E_1" type="fixed">
+    <parent link="wall_D_1250"/>
+    <child link="wall_E1_250"/>
+    <origin xyz="${-wall_1250_leglen+wall_thickness*3/2} ${wall_250_leglen/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_E_2" type="fixed">
+    <parent link="wall_E1_250"/>
+    <child link="wall_E_750"/>
+    <origin xyz="${-wall_thickness/2} ${wall_250_leglen/2-wall_thickness} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_E_3" type="fixed">
+    <parent link="wall_E_750"/>
+    <child link="wall_E2_250"/>
+    <origin xyz="${-wall_750_leglen+wall_thickness*3/2} ${-wall_250_leglen/2+wall_thickness} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_E_4" type="fixed">
+    <parent link="wall_E2_250"/>
+    <child link="wall_E_1250"/>
+    <origin xyz="${-wall_thickness+wall_thickness/2} ${-wall_250_leglen/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="wall_F1_250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_F2_250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_F_1250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_1250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_1250_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_1250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_1250_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_F_750">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_750_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_750_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_750_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_750_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="wall_F_1" type="fixed">
+    <parent link="wall_E_1250"/>
+    <child link="wall_F1_250"/>
+    <origin xyz="${-wall_1250_leglen+wall_thickness*3/2} ${wall_250_leglen/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_F_2" type="fixed">
+    <parent link="wall_F1_250"/>
+    <child link="wall_F_750"/>
+    <origin xyz="${-wall_thickness/2} ${wall_250_leglen/2-wall_thickness} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_F_3" type="fixed">
+    <parent link="wall_F_750"/>
+    <child link="wall_F2_250"/>
+    <origin xyz="${-wall_750_leglen+wall_thickness*3/2} ${-wall_250_leglen/2+wall_thickness} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_F_4" type="fixed">
+    <parent link="wall_F2_250"/>
+    <child link="wall_F_1250"/>
+    <origin xyz="${-wall_thickness+wall_thickness/2} ${-wall_250_leglen/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="wall_G1_250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_G2_250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_G_2000">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_2000_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_2000_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_2000_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_2000_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_G_750">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_750_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_750_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_750_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_750_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="wall_G_1" type="fixed">
+    <parent link="wall_F_1250"/>
+    <child link="wall_G1_250"/>
+    <origin xyz="${-wall_1250_leglen+wall_thickness*3/2} ${wall_250_leglen/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_G_2" type="fixed">
+    <parent link="wall_G1_250"/>
+    <child link="wall_G_750"/>
+    <origin xyz="${-wall_thickness/2} ${wall_250_leglen/2-wall_thickness} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_G_3" type="fixed">
+    <parent link="wall_G_750"/>
+    <child link="wall_G2_250"/>
+    <origin xyz="${-wall_750_leglen+wall_thickness*3/2} ${-wall_250_leglen/2+wall_thickness} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_G_4" type="fixed">
+    <parent link="wall_G2_250"/>
+    <child link="wall_G_2000"/>
+    <origin xyz="${-wall_thickness+wall_thickness/2} ${-wall_250_leglen/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="wall_H_6000">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_6000_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_6000_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_thickness} 0 0" rpy="0 ${pi/2} 0"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <link name="wall_H_1250">
+    <visual>
+      <geometry>
+        <box size="1 ${wall_H_1250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_H_1250_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1 ${wall_H_1250_leglen} ${wall_thickness}"/>
+      </geometry>
+      <origin xyz="${-wall_H_1250_leglen/2} ${wall_thickness/2} 0" rpy="0 ${pi/2} ${pi/2}"/>
+    </collision>
+    <xacro:default_inertial mass="10"/>
+  </link>
+
+  <joint name="wall_H_1" type="fixed">
+    <parent link="wall_G_2000"/>
+    <child link="wall_H_6000"/>
+    <origin xyz="${-wall_2000_leglen+wall_thickness*3/2} ${wall_6000_leglen/2} 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="wall_H_2" type="fixed">
+    <parent link="wall_H_6000"/>
+    <child link="wall_H_1250"/>
+    <origin xyz="${wall_H_1250_leglen-wall_thickness*3/2} ${wall_6000_leglen/2-wall_thickness} 0" rpy="0 0 0"/>
+  </joint>
+
+</robot>

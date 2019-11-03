@@ -19,12 +19,22 @@
   <arg name="initial_pose_a" default="0.0"/>
 
   <param name="/use_sim_time" value="$(arg use_sim_time)" />
-  <param name="map_description" command="$(find xacro)/xacro.py $(arg model)" />
+  <!-- <param name="map_description" command="$(find xacro)/xacro.py $(arg model)" /> -->
+  <!-- <param name="map_description" textfile="/home/lui/building_editor_models/itri_lab_wall/model.sdf"/>
 
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
-        args="-z 1.0 -unpause -urdf -model wall -param map_description" respawn="false" output="screen" />
+        args="-z 1.0 -unpause -urdf -model wall -param map_description" respawn="false" output="screen" /> -->
 
+  <!-- <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="headless" value="$(arg headless)"/>
+    <arg name="verbose" value="$(arg verbose)"/>
+  </include> -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find itri_robot_gazebo)/worlds/itri_lab.world"/>
     <arg name="debug" value="$(arg debug)" />
     <arg name="gui" value="$(arg gui)" />
     <arg name="paused" value="$(arg paused)"/>
@@ -57,7 +67,7 @@
   </node>
 
   <!-- Map server -->
-  <arg name="map_file" default="/home/lui/itri_space.yaml"/>
+  <arg name="map_file" default="/home/lui/map.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 
   <!-- AMCL -->
