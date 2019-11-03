@@ -14,10 +14,6 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   message_generation
 )
- add_service_files(
-   FILES
-   SaveImg.srv
- )
 generate_messages(
   DEPENDENCIES
   std_msgs
