@@ -74,9 +74,9 @@ void ParticleFilter::scan2wall_onMap(double shift_x, double shift_y, double thet
 
 bool ParticleFilter::mag_rate_particles()
 {
-    if(particles.p_num!=particles.pAry.size())
+    if(pNum!=particles.pAry.size())
     {
-        cerr << "Particles goes wrong!" << endl;
+        cout << "Particles goes wrong!" << endl;
         return false;
     }
     particles.weights.clear();
@@ -85,61 +85,90 @@ bool ParticleFilter::mag_rate_particles()
     for(int index_p=0; index_p<pNum; index_p++)
     {
         MagneticField current_mag_0;
-        int index_x = (particles.pAry[index_p].x - likelihood_map.origin[0])/0.05;
-        int index_y = (particles.pAry[index_p].y - likelihood_map.origin[1])/0.05;
-        current_mag_0.x=mag_data_zx.data[index_x][index_y];
-        current_mag_0.y=mag_data_zy.data[index_x][index_y];
-        current_mag_0.z=mag_data_zz.data[index_x][index_y];
+        int mag0_index_x = (particles.pAry[index_p].x - likelihood_map.origin[0])/0.05;
+        int mag0_index_y = (particles.pAry[index_p].y - likelihood_map.origin[1])/0.05;
+        // cout << mag0_index_y << ", " << mag0_index_x << endl;
+        current_mag_0.x=mag_data_zx.data[mag0_index_y][mag0_index_x];
+        current_mag_0.y=mag_data_zy.data[mag0_index_y][mag0_index_x];
+        current_mag_0.z=mag_data_zz.data[mag0_index_y][mag0_index_x];
         double scalar_0 = sqrt(pow(mag_0.x-current_mag_0.x,2) + pow(mag_0.y-current_mag_0.y,2) + pow(mag_0.z-current_mag_0.z,2));
         double dot_vector = current_mag_0.x*mag_0.x + current_mag_0.y*mag_0.y + current_mag_0.z*mag_0.z;
         double scalar_v1 = sqrt(pow(current_mag_0.x,2)+pow(current_mag_0.y,2)+pow(current_mag_0.z,2));
         double scalar_v2 = sqrt(pow(mag_0.x,2)+pow(mag_0.y,2)+pow(mag_0.z,2));
-        double theta_0 = acos(dot_vector/scalar_v1/scalar_v2);
-        cout << "Scalar Dist: " << scalar_0 << "\t theta: " << theta_0/3.14159*180 << endl;
-
+        double theta_0 = abs(acos(dot_vector/scalar_v1/scalar_v2)/3.14159*180);
+        if(theta_0 = NAN)
+        {
+            theta_0 = 10;
+        }
+        
         MagneticField current_mag_1;
         double dist = 0.2;
         double tmp_x = dist*cos(particles.pAry[index_p].yaw)+particles.pAry[index_p].x;
         double tmp_y = dist*sin(particles.pAry[index_p].yaw)+particles.pAry[index_p].y;
-        index_x = (tmp_x - likelihood_map.origin[0])/0.05;
-        index_y = (tmp_y - likelihood_map.origin[1])/0.05;
-        current_mag_1.x=mag_data_zx.data[index_x][index_y];
-        current_mag_1.y=mag_data_zy.data[index_x][index_y];
-        current_mag_1.z=mag_data_zz.data[index_x][index_y];
+        int mag1_index_x = (tmp_x - likelihood_map.origin[0])/0.05;
+        int mag1_index_y = (tmp_y - likelihood_map.origin[1])/0.05;
+        current_mag_1.x=mag_data_zx.data[mag1_index_y][mag1_index_x];
+        current_mag_1.y=mag_data_zy.data[mag1_index_y][mag1_index_x];
+        current_mag_1.z=mag_data_zz.data[mag1_index_y][mag1_index_x];
         double scalar_1 = sqrt(pow(mag_1.x-current_mag_1.x,2) + pow(mag_1.y-current_mag_1.y,2) + pow(mag_1.z-current_mag_1.z,2));
         dot_vector = current_mag_1.x*mag_1.x + current_mag_1.y*mag_1.y + current_mag_1.z*mag_1.z;
         scalar_v1 = sqrt(pow(current_mag_1.x,2)+pow(current_mag_1.y,2)+pow(current_mag_1.z,2));
         scalar_v2 = sqrt(pow(mag_1.x,2)+pow(mag_1.y,2)+pow(mag_1.z,2));
         double theta_1 = acos(dot_vector/scalar_v1/scalar_v2);
+        if(theta_1 = NAN)
+        {
+            theta_1 = 10;
+        }
 
         MagneticField current_mag_2;
         dist = -0.2;
         tmp_x = dist*cos(particles.pAry[index_p].yaw)+particles.pAry[index_p].x;
         tmp_y = dist*sin(particles.pAry[index_p].yaw)+particles.pAry[index_p].y;
-        index_x = (tmp_x - likelihood_map.origin[0])/0.05;
-        index_y = (tmp_y - likelihood_map.origin[1])/0.05;
-        current_mag_2.x=mag_data_zx.data[index_x][index_y];
-        current_mag_2.y=mag_data_zy.data[index_x][index_y];
-        current_mag_2.z=mag_data_zz.data[index_x][index_y];
+        int mag2_index_x = (tmp_x - likelihood_map.origin[0])/0.05;
+        int mag2_index_y = (tmp_y - likelihood_map.origin[1])/0.05;
+        current_mag_2.x=mag_data_zx.data[mag2_index_y][mag2_index_x];
+        current_mag_2.y=mag_data_zy.data[mag2_index_y][mag2_index_x];
+        current_mag_2.z=mag_data_zz.data[mag2_index_y][mag2_index_x];
         double scalar_2 = sqrt(pow(mag_2.x-current_mag_2.x,2) + pow(mag_2.y-current_mag_2.y,2) + pow(mag_2.z-current_mag_2.z,2));
         dot_vector = current_mag_2.x*mag_2.x + current_mag_2.y*mag_2.y + current_mag_2.z*mag_2.z;
         scalar_v1 = sqrt(pow(current_mag_2.x,2)+pow(current_mag_2.y,2)+pow(current_mag_2.z,2));
         scalar_v2 = sqrt(pow(mag_2.x,2)+pow(mag_2.y,2)+pow(mag_2.z,2));
         double theta_2 = acos(dot_vector/scalar_v1/scalar_v2);
-
-
-        if(scalar_0==0.0 || theta_0==0.0)
+        if(theta_2 = NAN)
         {
-            cout << "Dist equal to ZERO!!!" << endl;
-            tmp_weight = 1.0;
-        }else{
-            tmp_weight = loss_function(scalar_0)*loss_function(theta_0);
-            // tmp_weight = loss_function(scalar_0)*loss_function(theta_0)*loss_function(scalar_1)*loss_function(theta_1)*loss_function(scalar_2)*loss_function(theta_2);
+            theta_2 = 10;
         }
-        // cout << "Particle " << index_p << ": " << tmp_weight << endl;
+
+        cout << mag0_index_x << " " << mag0_index_y << ", " << mag1_index_x << " " << mag1_index_y << ", " << mag2_index_x << " " << mag2_index_y << endl;
+        // tmp_weight = loss_function(scalar_0)*loss_function(theta_0);
+        tmp_weight = loss_function(abs(scalar_0))*loss_function(theta_0)
+                        *loss_function(abs(scalar_1))*loss_function(theta_1)
+                        *loss_function(abs(scalar_2))*loss_function(theta_2);
+
+        // if(abs(hypot(index_x, mag_index.linear.x)<3 && abs(hypot(index_y, mag_index.linear.y)<3)))
+        // {
+        //     cout << "index_p " << index_p << "at x: " << index_x << "\t real: " << mag_index.linear.x << endl;
+        //     cout << "index_p " << index_p << "at y: " << index_y << "\t real: " << mag_index.linear.y << endl;
+        //     cout << "Scalar Dist: " << scalar_0 << "\t Loss: " << loss_function(scalar_0) << endl;
+        //     cout << "Scalar Theta: " << theta_0 << "\t Loss: " << loss_function(theta_0) << endl;
+        //     cout << "************************************************************************" <<endl;
+        // }
+
+        // if(tmp_weight>0.5)
+        // {
+        //     cout << "Scalar Dist: " << scalar_0 << "\t Loss: " << loss_function(scalar_0) << endl;
+        //     cout << "Scalar Theta: " << theta_0 << "\t Loss: " << loss_function(theta_0) << endl;
+        //     cout << "Scalar Dist: " << scalar_1 << "\t Loss: " << loss_function(scalar_1) << endl;
+        //     cout << "Scalar Theta: " << theta_1 << "\t Loss: " << loss_function(theta_1) << endl;
+        //     cout << "Scalar Dist: " << scalar_2 << "\t Loss: " << loss_function(scalar_2) << endl;
+        //     cout << "Scalar Theta: " << theta_2 << "\t Loss: " << loss_function(theta_2) << endl;
+        //     cout << "Rate Particles " << index_p << ": " << tmp_weight << endl;
+        //     cout << "************************************************************************" <<endl;
+        // }
         particles.sumUp_weight += tmp_weight;
         particles.weights.push_back(tmp_weight);
     }
+
     return true;
 }
 
@@ -182,26 +211,56 @@ bool ParticleFilter::rate_particles()           // for laser scan
         particles.weights.push_back(tmp_weight);
     }
     MagneticField current_mag_0;
-    // current_mag_0.x=mag_data_zx.data[mag_index.linear.x][mag_index.linear.y];
-    // current_mag_0.y=mag_data_zy.data[mag_index.linear.x][mag_index.linear.y];
-    // current_mag_0.z=mag_data_zz.data[mag_index.linear.x][mag_index.linear.y];
-    int index_x = (robot.pose.x-likelihood_map.origin[0])/0.05;
-    int index_y = (robot.pose.y-likelihood_map.origin[1])/0.05;
-    current_mag_0.x=mag_data_zx.data[index_x][index_y];
-    current_mag_0.y=mag_data_zy.data[index_x][index_y];
-    current_mag_0.z=mag_data_zz.data[index_x][index_y];
+    cout << mag_data_zx.data.size() << ", " << mag_data_zx.data[0].size();
+    current_mag_0.x=mag_data_zx.data[mag0_index.linear.y][mag0_index.linear.x];
+    current_mag_0.y=mag_data_zy.data[mag0_index.linear.y][mag0_index.linear.x];
+    current_mag_0.z=mag_data_zz.data[mag0_index.linear.y][mag0_index.linear.x];
+    int index_x, index_y;
+    // int index_x = (robot.pose.x-likelihood_map.origin[0])/0.05;
+    // int index_y = (robot.pose.y-likelihood_map.origin[1])/0.05;
+    // current_mag_0.x=mag_data_zx.data[index_x][index_y];
+    // current_mag_0.y=mag_data_zy.data[index_x][index_y];
+    // current_mag_0.z=mag_data_zz.data[index_x][index_y];
     // cout << "[143][100]: " << setprecision(15) << mag_data_zx.data[143][100] << endl;
     // cout << "index_x: " << mag_index.linear.x << "\t index_y: " << mag_index.linear.y << endl;
-    cout << "Fake_sensor x: " << mag_0.x << "\t on_map: " << current_mag_0.x << endl;
-    cout << "Fake_sensor y: " << mag_0.y << "\t on_map: " << current_mag_0.y << endl;
-    cout << "Fake_sensor z: " << mag_0.z << "\t on_map: " << current_mag_0.z << endl;
-    cout << "---------------------------------" << endl;
-    double dist = sqrt(pow(mag_0.x-current_mag_0.x,2)+pow(mag_0.y-current_mag_0.y,2)+pow(mag_0.z-current_mag_0.z,2));
+    cout << "Fake_sensor0 x: " << mag_0.x << "\t on_map: " << current_mag_0.x << endl;
+    cout << "Fake_sensor0 y: " << mag_0.y << "\t on_map: " << current_mag_0.y << endl;
+    cout << "Fake_sensor0 z: " << mag_0.z << "\t on_map: " << current_mag_0.z << endl;
+    cout << "mag0_on_map x: " << mag0_index.linear.x << "\t y: " << mag0_index.linear.y << endl;
+    // cout << "mag0_on_map x: " << index_x << "\t y: " << index_y << endl;
+    double scalar_0 = sqrt(pow(mag_0.x-current_mag_0.x,2)+pow(mag_0.y-current_mag_0.y,2)+pow(mag_0.z-current_mag_0.z,2));
     double dot_vector = mag_0.x*current_mag_0.x + mag_0.y*current_mag_0.y + mag_0.z*current_mag_0.z;
     double scalar_v1 = sqrt(pow(mag_0.x,2) + pow(mag_0.y,2) + pow(mag_0.z,2));
     double scalar_v2 = sqrt(pow(current_mag_0.x,2) + pow(current_mag_0.y,2) + pow(current_mag_0.z,2));
     double theta = acos(dot_vector/scalar_v1/scalar_v2);
-    cout << "Dist: " << dist << "\t , Theta: " << theta <<endl;
+    cout << "Dist: " << scalar_0 << "\t , Theta: " << theta <<endl;
+    cout << "---------------------------------" << endl;
+
+    MagneticField current_mag_1;
+    double dist = 0.2;
+    double tmp_x = dist*cos(robot.pose.yaw)+robot.pose.x;
+    double tmp_y = dist*sin(robot.pose.yaw)+robot.pose.y;
+    index_x = (tmp_x - likelihood_map.origin[0])/0.05;
+    index_y = (tmp_y - likelihood_map.origin[1])/0.05;
+    // current_mag_1.x=mag_data_zx.data[index_x][index_y];
+    // current_mag_1.y=mag_data_zy.data[index_x][index_y];
+    // current_mag_1.z=mag_data_zz.data[index_x][index_y];
+    current_mag_1.x=mag_data_zx.data[mag1_index.linear.y][mag1_index.linear.x];
+    current_mag_1.y=mag_data_zy.data[mag1_index.linear.y][mag1_index.linear.x];
+    current_mag_1.z=mag_data_zz.data[mag1_index.linear.y][mag1_index.linear.x];
+    cout << "Fake_sensor1 x: " << mag_1.x << "\t on_map: " << current_mag_1.x << endl;
+    cout << "Fake_sensor1 y: " << mag_1.y << "\t on_map: " << current_mag_1.y << endl;
+    cout << "Fake_sensor1 z: " << mag_1.z << "\t on_map: " << current_mag_1.z << endl;
+    cout << "mag1_on_map x: " << mag1_index.linear.x << "\t y: " << mag1_index.linear.y << endl;
+    // cout << "mag1_on_map x: " << index_x << "\t y: " << index_y << endl;
+    double scalar_1 = sqrt(pow(mag_1.x-current_mag_1.x,2) + pow(mag_1.y-current_mag_1.y,2) + pow(mag_1.z-current_mag_1.z,2));
+    dot_vector = current_mag_1.x*mag_1.x + current_mag_1.y*mag_1.y + current_mag_1.z*mag_1.z;
+    scalar_v1 = sqrt(pow(current_mag_1.x,2)+pow(current_mag_1.y,2)+pow(current_mag_1.z,2));
+    scalar_v2 = sqrt(pow(mag_1.x,2)+pow(mag_1.y,2)+pow(mag_1.z,2));
+    double theta_1 = acos(dot_vector/scalar_v1/scalar_v2);
+    cout << "Dist: " << scalar_1 << "\t , Theta: " << theta_1 <<endl;
+    cout << "***********************************" << endl;
+
     return true;
 }
 
@@ -211,8 +270,8 @@ void ParticleFilter::roulette_wheel_selection()
     // cout << "Selecting particles!" << endl;
     if(particles.sumUp_weight==0.0)
     {
-        particles.init_on_wholeMap(particles.p_num,x_max,x_min,y_max,y_min);
-        cerr << "SUMUP_weight is ZERO" << endl;
+        particles.init_on_wholeMap(pNum,x_max,x_min,y_max,y_min);
+        cout << "**************** SUMUP_weight is ZERO ********************" << endl;
         return;
     }
 
@@ -221,13 +280,15 @@ void ParticleFilter::roulette_wheel_selection()
     for(int index_p=0; index_p<particles.p_num; index_p++)
     {
         tmp_weight = tmp_weight + particles.weights[index_p]/particles.sumUp_weight;
+        // cout << "tmp_weight: " << tmp_weight << "\t particles.sumUp_weight: " << particles.sumUp_weight << endl;
         // cout << index_p << ": " << tmp_weight << endl;
         particles.accumulated_weights.push_back(tmp_weight);
     }
     // particles.sort_particles();
     
     vector<Pose> new_pAry;
-    double remain_ratio = 0.60;
+    // double remain_ratio = 0.95;  // for laser or 1 mag
+    double remain_ratio = 0.6; // for multi-mag
     double mean_x = 0.0;
     double mean_y = 0.0;
     double mean_yaw = 0.0;
@@ -258,8 +319,9 @@ void ParticleFilter::roulette_wheel_selection()
     mean_sum_sin = mean_sum_sin/particles.p_num;
     mean_sum_cos = mean_sum_cos/particles.p_num;
     mean_yaw = atan2(mean_sum_sin, mean_sum_cos);
-    double range_xy = 0.2;
-    double range_yaw = 0.1745;
+    // double range_xy = 0.1;   // for laser or 1 mag
+    double range_xy = 0.1;
+    double range_yaw = 0.1745*2;
     for(;index_p<particles.p_num; index_p++)
     {
         new_pAry.push_back(particles.init_one_particle(mean_x, mean_y, mean_yaw, range_xy, range_yaw));
@@ -298,7 +360,17 @@ void ParticleFilter::roulette_wheel_selection()
     sum_cos = sum_cos/particles.p_num;
     robot.pose.yaw = atan2(sum_sin, sum_cos);
 
-    cout << "Robot Pose: " << robot.pose.x << ", " << robot.pose.y << ", " << robot.pose.yaw << endl;
+    // cout << "Robot Pose: " << robot.pose.x << ", " << robot.pose.y << ", " << robot.pose.yaw << endl;
+}
+
+void ParticleFilter::tournment_selection()
+{
+    particles.sort_particles();
+    // for(int i=0; i<pNum; i++)
+    // {
+    //     cout << particles.weights[i] << endl;
+    // }
+
 }
 
 bool ParticleFilter::input_scan(LaserScan scan_in)
@@ -354,8 +426,14 @@ bool ParticleFilter::input_particles(Particles particles_in)
     }
 }
 
-bool ParticleFilter::input_index(geometry_msgs::Twist index_in)
+bool ParticleFilter::input_mag0_index(geometry_msgs::Twist index_in)
 {
-    mag_index = index_in;
+    mag0_index = index_in;
+    return true;
+}
+
+bool ParticleFilter::input_mag1_index(geometry_msgs::Twist index_in)
+{
+    mag1_index = index_in;
     return true;
 }

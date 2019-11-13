@@ -15,7 +15,7 @@ public:
     ~RobotPosePublisher(){}
     void init()
     {
-        robot_pose_publisher = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("robot_pose",1);
+        robot_pose_publisher = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("m_robot_pose",1);
     }
     void generate_robot_pose_msgs(Robot robot)
     {
@@ -37,7 +37,7 @@ public:
     void publish_msgs()
     {
         robot_pose_publisher.publish(pose_msgs);
-        br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", "base_link"));
+        br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", "m_base_link"));
     }
     
 private:

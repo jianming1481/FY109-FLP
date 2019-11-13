@@ -42,20 +42,22 @@ public:
     void init(string map_path="/home/lui/map_r1.yaml");
     void set_pNum(int num){pNum = num;}
     // Functions for algorithm
-    bool input_index(geometry_msgs::Twist index_in);
+    bool input_mag0_index(geometry_msgs::Twist index_in);
+    bool input_mag1_index(geometry_msgs::Twist index_in);
     bool input_scan(LaserScan scan_in);
     bool input_mag_0(MagneticField mag_in);
     bool input_mag_1(MagneticField mag_in);
     bool input_mag_2(MagneticField mag_in);
     bool input_particles(Particles particles_in);
     void scan2wall_onMap(double shift_x, double shift_y, double theta);
+    double loss_function(double dist)
+    {
+        return 1/(1+exp(10.0*dist-5));
+    }
     bool rate_particles();
     bool mag_rate_particles();
     void roulette_wheel_selection();
-    double loss_function(double dist)
-    {
-        return 1/(1+exp(-10.0*dist-5));
-    }
+    void tournment_selection();
 
     // Class Output
     vector<Vector2d>   get_scan_wall_on_map(){return scan_wall_on_map;}
@@ -64,6 +66,8 @@ public:
     double             get_scan_ranges(){return scan.ranges;}
     LaserLikelihoodMap get_likelihood_map(){return likelihood_map;}
     Robot              get_robot(){return robot;}
+
+    double x_max, y_max, x_min, y_min;
 private:
     // Input Sensors
     LaserScan scan;
@@ -83,12 +87,13 @@ private:
     MagneticMap mag_data_zx;
     MagneticMap mag_data_zy;
     MagneticMap mag_data_zz;
-    geometry_msgs::Twist mag_index;
+    geometry_msgs::Twist mag0_index;
+    geometry_msgs::Twist mag1_index;
     // Variables for particle filter
     Vector3d displacement;
     Particles particles;
     Robot robot;
-    double x_max, y_max, x_min, y_min;
+    
     int pNum;
 };
 

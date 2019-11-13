@@ -25,9 +25,16 @@ double Particles::random_yaw(double yaw_max, double yaw_min)
 Pose Particles::init_one_particle(double mean_x, double mean_y, double mean_yaw, double range_xy, double range_yaw)
 {
     Pose tmp_pose;
-    tmp_pose.x = random_x(range_xy, -range_xy)+mean_x;
-    tmp_pose.y = random_y(range_xy, -range_xy)+mean_y;
-    tmp_pose.yaw = random_yaw(range_yaw, -range_yaw)+mean_yaw;
+    do{
+        do{
+            tmp_pose.x = random_x(range_xy, -range_xy);
+            tmp_pose.y = random_y(range_xy, -range_xy);
+        }while(hypot(tmp_pose.x, tmp_pose.y)>range_xy);
+        tmp_pose.x = tmp_pose.x+mean_x;
+        tmp_pose.y = tmp_pose.y+mean_y;
+        tmp_pose.yaw = random_yaw(range_yaw, -range_yaw)+mean_yaw;
+    }while(tmp_pose.x>max_x || tmp_pose.y>max_y || tmp_pose.x<min_x || tmp_pose.y<min_y);
+    
     return tmp_pose;
 }
 void Particles::init_on_wholeMap(int particles_number, 
@@ -86,6 +93,7 @@ void Particles::init(int particles_number, double x, double y, double yaw, doubl
         pAry.push_back(tmp_pose);
     }
     sumUp_weight = 0.0;
+    weights.clear();
     cout << "Initial particles done!" << endl;
 }
 
@@ -159,8 +167,8 @@ void Particles::sort_particles()
             }
         }
     }
-    for(int i=0; i<p_num;i++)
-    {
-        // cout << i << ": " << weights[i]<<endl;
-    }
+    // for(int i=0; i<p_num;i++)
+    // {
+    //     // cout << i << ": " << weights[i]<<endl;
+    // }
 }

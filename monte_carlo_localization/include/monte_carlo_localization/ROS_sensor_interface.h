@@ -25,7 +25,8 @@ public:
     {
         odom_sub = nh.subscribe<nav_msgs::Odometry>("odom", 1, &ROSSensorInterfaces::odomCallback, this);
         scan_sub = nh.subscribe<sensor_msgs::LaserScan> ("scan", 1, &ROSSensorInterfaces::scanCallback, this);
-        mag_index_sub = nh.subscribe<geometry_msgs::Twist> ("mag_index", 1, &ROSSensorInterfaces::indexCallback, this);
+        mag0_index_sub = nh.subscribe<geometry_msgs::Twist> ("mag0_index", 1, &ROSSensorInterfaces::index0Callback, this);
+        mag1_index_sub = nh.subscribe<geometry_msgs::Twist> ("mag1_index", 1, &ROSSensorInterfaces::index1Callback, this);
         mag_0_sub = nh.subscribe<sensor_msgs::MagneticField> ("m_mag_0", 1, &ROSSensorInterfaces::mag0Callback, this);
         mag_1_sub = nh.subscribe<sensor_msgs::MagneticField> ("m_mag_1", 1, &ROSSensorInterfaces::mag1Callback, this);
         mag_2_sub = nh.subscribe<sensor_msgs::MagneticField> ("m_mag_2", 1, &ROSSensorInterfaces::mag2Callback, this);
@@ -86,12 +87,16 @@ public:
             scan.data.push_back(scan_in->ranges[downsampling_param*i]);
         }
     }
-    void indexCallback(const geometry_msgs::Twist::ConstPtr& index_in)
+    void index0Callback(const geometry_msgs::Twist::ConstPtr& index_in)
     {
-        mag_index.linear.x = index_in->linear.x;
-        mag_index.linear.y = index_in->linear.y;
+        mag0_index.linear.x = index_in->linear.x;
+        mag0_index.linear.y = index_in->linear.y;
     }
-
+    void index1Callback(const geometry_msgs::Twist::ConstPtr& index_in)
+    {
+        mag1_index.linear.x = index_in->linear.x;
+        mag1_index.linear.y = index_in->linear.y;
+    }
     void mag0Callback(const sensor_msgs::MagneticField::ConstPtr& mag_in)
     {
         mag_0.x = mag_in->magnetic_field.x;
@@ -156,7 +161,8 @@ public:
         robot.last_odom = robot.odom;
     }
     LaserScan get_scan(){return scan;}
-    geometry_msgs::Twist get_index(){return mag_index;}
+    geometry_msgs::Twist get_mag0_index(){return mag0_index;}
+    geometry_msgs::Twist get_mag1_index(){return mag1_index;}
     Robot get_robot_odom(Robot robot_in)
     {
         robot_in.odom = robot.odom;
@@ -173,7 +179,8 @@ private:
     ros::NodeHandle nh;
     ros::Subscriber scan_sub;
     ros::Subscriber odom_sub;
-    ros::Subscriber mag_index_sub;
+    ros::Subscriber mag0_index_sub;
+    ros::Subscriber mag1_index_sub;
     ros::Subscriber mag_0_sub;
     ros::Subscriber mag_1_sub;
     ros::Subscriber mag_2_sub;
@@ -181,7 +188,8 @@ private:
 
     Vector3d displacement;
     LaserScan scan;
-    geometry_msgs::Twist mag_index;
+    geometry_msgs::Twist mag0_index;
+    geometry_msgs::Twist mag1_index;
     MagneticField mag_0;
     MagneticField mag_1;
     MagneticField mag_2;

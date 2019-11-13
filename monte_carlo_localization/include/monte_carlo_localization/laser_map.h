@@ -22,7 +22,8 @@ public:
 	double free_thresh;
 	double occupied_thresh;
 	string map_path;
-	
+	// Map Boundary
+  	double max_x, max_y, min_x, min_y;
     vector<double> origin;
 	vector<vector<double>> data;      // for storage the pixel value
 };

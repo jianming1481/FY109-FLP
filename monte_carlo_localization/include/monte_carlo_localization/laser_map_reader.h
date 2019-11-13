@@ -62,7 +62,10 @@ public:
     map.free_thresh = free_thresh;
     size_t lastindex = image_path.find_last_of(".");
     map.map_path = image_path.substr(0,lastindex);
-
+    map.max_x = max_x;
+    map.max_y = max_y;
+    map.min_x = min_x;
+    map.min_y = min_y;
     map.data = this->get_data();
     return map;
   }
@@ -123,6 +126,11 @@ private:
         ss >> data[j][i];
       }
     }
+    max_x = width*resolution + origin[0];
+    max_y = height*resolution + origin[1];
+    min_x = origin[0];
+    min_y = origin[1];
+
     infile.close();
     return true;
   }
@@ -141,7 +149,8 @@ private:
   int height;
 	int width;
 	unsigned char **data;      // for storage the pixel value
-
+  // Map Boundary
+  double max_x, max_y, min_x, min_y;
   // PGM
   string pgm_version;        // P2 or P5
   string pgm_comment;

@@ -40,6 +40,13 @@ public:
     double rand_Range();
     vector<Vector2d> generate_displacement_noise(Vector3d displacement_in);
 
+    void set_map_boundary(double _max_x, double _max_y, double _min_x, double _min_y)
+    {
+        max_x = _max_x;
+        max_y = _max_y;
+        min_x = _min_x;
+        min_y = _min_y;
+    }
     void init_on_wholeMap(int particles_number, 
               double x_max, double x_min,
               double y_max, double y_min,
@@ -58,5 +65,6 @@ public:
     bool trust_imu;
     bool for_debug;         
     vector<Pose> pAry;
+    double max_x, max_y, min_x, min_y;
 };
 #endif

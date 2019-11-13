@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     ros_sensor.init();
 
     // Initial Particles
-    int pNum = 600;
+    int pNum = 1000;
     pf.set_pNum(pNum);
     particles.init(pNum, -1.0, -1.5);
     
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     }else{
         pf.init(argv[1]);
     }
-    
+    particles.set_map_boundary(pf.x_max, pf.y_max, pf.x_min, pf.y_min);
     pAry_pub.init();
     robot_pose_pub.init();
 
@@ -50,16 +50,20 @@ int main(int argc, char **argv)
         {
             particles.move_particles(displacement);
             ros_sensor.clean_displacement();
+
             // if(pf.input_scan(ros_sensor.get_scan())&&pf.input_particles(particles))
             // {
             //     // int iterator = 0;
             //     // while(iterator<5)
             //     // {
             //         pf.input_mag_0(ros_sensor.get_mag_0());
-            //         pf.input_index(ros_sensor.get_index());
+            //         pf.input_mag_1(ros_sensor.get_mag_1());
+            //         pf.input_mag0_index(ros_sensor.get_mag0_index());
+            //         pf.input_mag1_index(ros_sensor.get_mag1_index());
             //         if(pf.rate_particles())
             //         {
             //             pf.roulette_wheel_selection();
+            //             // pf.tournment_selection();
             //             particles = pf.get_particles();
             //             pAry_pub.generate_particles_msgs(particles());
             //             pAry_pub.publish_msg();
@@ -71,26 +75,22 @@ int main(int argc, char **argv)
             // }
 
 
-            if(pf.input_mag_0(ros_sensor.get_mag_0()) 
+            if(        pf.input_mag_0(ros_sensor.get_mag_0()) 
                     && pf.input_mag_1(ros_sensor.get_mag_1())
                     && pf.input_mag_2(ros_sensor.get_mag_2())
                     && pf.input_particles(particles)
             )
             {
-                // int iterator = 0;
-                // while(iterator<5)
-                // {
-                    if(pf.mag_rate_particles())
-                    {
-                        pf.roulette_wheel_selection();
-                        particles = pf.get_particles();
-                        pAry_pub.generate_particles_msgs(particles());
-                        pAry_pub.publish_msg();
-                        robot_pose_pub.generate_robot_pose_msgs(pf.get_robot());
-                        robot_pose_pub.publish_msgs();
-                    }
-                    // iterator++;
-                // }
+                pf.input_mag0_index(ros_sensor.get_mag0_index());
+                if(pf.mag_rate_particles())
+                {
+                    pf.roulette_wheel_selection();
+                    particles = pf.get_particles();
+                    pAry_pub.generate_particles_msgs(particles());
+                    pAry_pub.publish_msg();
+                    robot_pose_pub.generate_robot_pose_msgs(pf.get_robot());
+                    robot_pose_pub.publish_msgs();
+                }
             }
         }
         if(ros_sensor.pose_estimation_flag)
