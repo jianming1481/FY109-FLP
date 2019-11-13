@@ -51,6 +51,12 @@ target_link_libraries(test_scan_wall
   ${catkin_LIBRARIES}
 )
 
+add_executable(test_mag_map_pub_main src/test_mag_map_pub_main.cpp)
+target_link_libraries(test_mag_map_pub_main
+  yaml-cpp
+  ${catkin_LIBRARIES}
+)
+
 # add_executable(test_scan_wall src/test_laser_wall_pub_main.cpp src/particles.cpp src/particle_filter.cpp)
 # target_link_libraries(test_scan_wall
 #   yaml-cpp

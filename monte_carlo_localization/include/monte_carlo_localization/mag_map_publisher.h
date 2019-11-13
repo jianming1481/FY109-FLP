@@ -28,13 +28,13 @@ public:
     }
     void read_magnetic_map()
     {
-        csv_reader_.set_filename("/home/lui/catkin_ws/src/FY109-FLP/magnetic_map_data/ROS_msg/mag_pred_x.csv");
+        csv_reader.set_filename("/home/lui/catkin_ws/src/FY109-FLP/magnetic_map_data/20191029_dist007/ROS_msg/mag_pred_x.csv");
         mag_data_zx = csv_reader.get_data();
         
-        csv_reader_.set_filename("/home/lui/catkin_ws/src/FY109-FLP/magnetic_map_data/ROS_msg/mag_pred_y.csv");
+        csv_reader.set_filename("/home/lui/catkin_ws/src/FY109-FLP/magnetic_map_data/20191029_dist007/ROS_msg/mag_pred_y.csv");
         mag_data_zy = csv_reader.get_data();
 
-        csv_reader_.set_filename("/home/lui/catkin_ws/src/FY109-FLP/magnetic_map_data/ROS_msg/mag_pred_z.csv");
+        csv_reader.set_filename("/home/lui/catkin_ws/src/FY109-FLP/magnetic_map_data/20191029_dist007/ROS_msg/mag_pred_z.csv");
         mag_data_zz = csv_reader.get_data();
 
         // std::cout << "Magnetic Data Size Width: " << mag_data_zx_.data.size() << " Height: " << mag_data_zx_.data[0].size() << std::endl; 
@@ -45,18 +45,18 @@ public:
     {
         nav_msgs::OccupancyGrid mag_map_msg;
         mag_map_msg.header.frame_id = "map";
-        mag_map_msg.info.resolution = 0.5;
+        mag_map_msg.info.resolution = 0.05;
         mag_map_msg.info.width = mag_map.width;
         mag_map_msg.info.height = mag_map.height;
         geometry_msgs::Pose origin;
-        origin.position.x=-35.657444;
-        origin.position.y=-20.981978;
+        origin.position.x=-3.176096;
+        origin.position.y=-5.051761;
         mag_map_msg.info.origin = origin;
-        for(int i=0;i<mag_map.height_;i++)
+        for(int i=0;i<mag_map.height;i++)
         {
-            for(int j=0;j<mag_map.width_;j++)
+            for(int j=0;j<mag_map.width;j++)
             {
-                // mag_map_msg.data.push_back(mag_map.data[i][j]);
+                mag_map_msg.data.push_back(mag_map.data[i][j]);
             }
         }
         cout << "Generate Map Message Done!" << endl;
@@ -66,9 +66,9 @@ public:
     void publish_mag_map()
     {
 
-        mag_map_x_publisher_.publish(mag_map_x_msg);
-        mag_map_y_publisher_.publish(mag_map_y_msg);
-        mag_map_z_publisher_.publish(mag_map_z_msg);
+        mag_map_x_publisher.publish(mag_map_x_msg);
+        mag_map_y_publisher.publish(mag_map_y_msg);
+        mag_map_z_publisher.publish(mag_map_z_msg);
     }
 private:
     /* data */

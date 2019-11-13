@@ -11,7 +11,7 @@ class MagneticMap
 public:
 	MagneticMap()
 	{
-	origin_ = vector<double>(3, 0.0);
+		origin = vector<double>(3, 0.0);
 	}
 	~MagneticMap(){}
 
@@ -19,6 +19,7 @@ public:
 	int width;
 	string resolution;
     vector<double> origin;
+	vector<vector<double>> data;
 	vector<vector<double>> mag_x_data;
     vector<vector<double>> mag_y_data;
     vector<vector<double>> mag_z_data;

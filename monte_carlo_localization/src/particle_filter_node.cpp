@@ -22,13 +22,14 @@ int main(int argc, char **argv)
     ros_sensor.init();
 
     // Initial Particles
-    int pNum = 1000;
-    particles.init(pNum);
+    int pNum = 600;
+    pf.set_pNum(pNum);
+    particles.init(pNum, -1.0, -1.5);
     
     // Input map to initial ParticleFilter
     if (argc < 2)
     {
-        string default_map_path = "/home/lui/test.yaml";
+        string default_map_path = "/home/lui/map_r1.yaml";
         pf.init(default_map_path);
     }else{
         pf.init(argv[1]);
@@ -49,12 +50,37 @@ int main(int argc, char **argv)
         {
             particles.move_particles(displacement);
             ros_sensor.clean_displacement();
-            if(pf.input_scan(ros_sensor.get_scan())&&pf.input_particles(particles))
+            // if(pf.input_scan(ros_sensor.get_scan())&&pf.input_particles(particles))
+            // {
+            //     // int iterator = 0;
+            //     // while(iterator<5)
+            //     // {
+            //         pf.input_mag_0(ros_sensor.get_mag_0());
+            //         pf.input_index(ros_sensor.get_index());
+            //         if(pf.rate_particles())
+            //         {
+            //             pf.roulette_wheel_selection();
+            //             particles = pf.get_particles();
+            //             pAry_pub.generate_particles_msgs(particles());
+            //             pAry_pub.publish_msg();
+            //             robot_pose_pub.generate_robot_pose_msgs(pf.get_robot());
+            //             robot_pose_pub.publish_msgs();
+            //         }
+            //         // iterator++;
+            //     // }
+            // }
+
+
+            if(pf.input_mag_0(ros_sensor.get_mag_0()) 
+                    && pf.input_mag_1(ros_sensor.get_mag_1())
+                    && pf.input_mag_2(ros_sensor.get_mag_2())
+                    && pf.input_particles(particles)
+            )
             {
                 // int iterator = 0;
                 // while(iterator<5)
                 // {
-                    if(pf.rate_particles())
+                    if(pf.mag_rate_particles())
                     {
                         pf.roulette_wheel_selection();
                         particles = pf.get_particles();

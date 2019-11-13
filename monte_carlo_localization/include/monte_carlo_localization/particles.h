@@ -44,7 +44,8 @@ public:
               double x_max, double x_min,
               double y_max, double y_min,
               double yaw_max = M_PI, double yaw_min = -M_PI);
-                        
+    Pose init_one_particle(double mean_x, double mean_y, double mean_yaw, double range_xy, double range_yaw);
+
     void init(int particles_number=200, double x=0.0, double y=0.0, double yaw=0.0, double radius = 1.0);
     vector<Pose> get_particles(){return pAry;}
     Particles operator()() {return *this;}

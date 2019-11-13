@@ -3,12 +3,15 @@
 
 #include <ros/ros.h>
 #include "sensor_msgs/LaserScan.h"
+#include "sensor_msgs/MagneticField.h"
 #include "nav_msgs/Odometry.h"
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
+#include "geometry_msgs/Twist.h"
 #include "tf/transform_datatypes.h"
 
 #include "monte_carlo_localization/laser_scan.h"
 #include "monte_carlo_localization/robot.h"
+#include "monte_carlo_localization/magnetic_field.h"
 
 using namespace std;
 
@@ -22,6 +25,10 @@ public:
     {
         odom_sub = nh.subscribe<nav_msgs::Odometry>("odom", 1, &ROSSensorInterfaces::odomCallback, this);
         scan_sub = nh.subscribe<sensor_msgs::LaserScan> ("scan", 1, &ROSSensorInterfaces::scanCallback, this);
+        mag_index_sub = nh.subscribe<geometry_msgs::Twist> ("mag_index", 1, &ROSSensorInterfaces::indexCallback, this);
+        mag_0_sub = nh.subscribe<sensor_msgs::MagneticField> ("m_mag_0", 1, &ROSSensorInterfaces::mag0Callback, this);
+        mag_1_sub = nh.subscribe<sensor_msgs::MagneticField> ("m_mag_1", 1, &ROSSensorInterfaces::mag1Callback, this);
+        mag_2_sub = nh.subscribe<sensor_msgs::MagneticField> ("m_mag_2", 1, &ROSSensorInterfaces::mag2Callback, this);
         init_flag = true;
         pose_estimation_flag = false;
         init_pose_sub = nh.subscribe<geometry_msgs::PoseWithCovarianceStamped> (
@@ -79,6 +86,30 @@ public:
             scan.data.push_back(scan_in->ranges[downsampling_param*i]);
         }
     }
+    void indexCallback(const geometry_msgs::Twist::ConstPtr& index_in)
+    {
+        mag_index.linear.x = index_in->linear.x;
+        mag_index.linear.y = index_in->linear.y;
+    }
+
+    void mag0Callback(const sensor_msgs::MagneticField::ConstPtr& mag_in)
+    {
+        mag_0.x = mag_in->magnetic_field.x;
+        mag_0.y = mag_in->magnetic_field.y;
+        mag_0.z = mag_in->magnetic_field.z;
+    }
+    void mag1Callback(const sensor_msgs::MagneticField::ConstPtr& mag_in)
+    {
+        mag_1.x = mag_in->magnetic_field.x;
+        mag_1.y = mag_in->magnetic_field.y;
+        mag_1.z = mag_in->magnetic_field.z;
+    }
+    void mag2Callback(const sensor_msgs::MagneticField::ConstPtr& mag_in)
+    {
+        mag_2.x = mag_in->magnetic_field.x;
+        mag_2.y = mag_in->magnetic_field.y;
+        mag_2.z = mag_in->magnetic_field.z;
+    }
 
     void calculate_displacement()
     {
@@ -125,12 +156,16 @@ public:
         robot.last_odom = robot.odom;
     }
     LaserScan get_scan(){return scan;}
+    geometry_msgs::Twist get_index(){return mag_index;}
     Robot get_robot_odom(Robot robot_in)
     {
         robot_in.odom = robot.odom;
         robot_in.last_odom = robot.last_odom;
         return robot;
     }
+    MagneticField get_mag_0(){return mag_0;}
+    MagneticField get_mag_1(){return mag_1;}
+    MagneticField get_mag_2(){return mag_2;}
     bool init_flag;
     bool pose_estimation_flag;
     Vector3d init_pose;
@@ -138,10 +173,18 @@ private:
     ros::NodeHandle nh;
     ros::Subscriber scan_sub;
     ros::Subscriber odom_sub;
+    ros::Subscriber mag_index_sub;
+    ros::Subscriber mag_0_sub;
+    ros::Subscriber mag_1_sub;
+    ros::Subscriber mag_2_sub;
     ros::Subscriber init_pose_sub;
 
     Vector3d displacement;
     LaserScan scan;
+    geometry_msgs::Twist mag_index;
+    MagneticField mag_0;
+    MagneticField mag_1;
+    MagneticField mag_2;
     Robot robot;
 };
 

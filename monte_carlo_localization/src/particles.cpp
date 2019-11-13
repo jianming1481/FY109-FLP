@@ -22,7 +22,14 @@ double Particles::random_yaw(double yaw_max, double yaw_min)
     yaw = yaw+yaw_min;
     return yaw;
 }
-
+Pose Particles::init_one_particle(double mean_x, double mean_y, double mean_yaw, double range_xy, double range_yaw)
+{
+    Pose tmp_pose;
+    tmp_pose.x = random_x(range_xy, -range_xy)+mean_x;
+    tmp_pose.y = random_y(range_xy, -range_xy)+mean_y;
+    tmp_pose.yaw = random_yaw(range_yaw, -range_yaw)+mean_yaw;
+    return tmp_pose;
+}
 void Particles::init_on_wholeMap(int particles_number, 
                      double x_max, double x_min, 
                      double y_max, double y_min,
@@ -75,6 +82,7 @@ void Particles::init(int particles_number, double x, double y, double yaw, doubl
         }else{
             tmp_pose.yaw = random_yaw(M_PI, -M_PI);
         }
+        // tmp_pose.yaw = random_yaw(M_PI, -M_PI);
         pAry.push_back(tmp_pose);
     }
     sumUp_weight = 0.0;
