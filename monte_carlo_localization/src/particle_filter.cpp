@@ -227,7 +227,7 @@ void ParticleFilter::roulette_wheel_selection()
     // particles.sort_particles();
     
     vector<Pose> new_pAry;
-    double remain_ratio = 0.95;
+    double remain_ratio = 0.60;
     double mean_x = 0.0;
     double mean_y = 0.0;
     double mean_yaw = 0.0;
