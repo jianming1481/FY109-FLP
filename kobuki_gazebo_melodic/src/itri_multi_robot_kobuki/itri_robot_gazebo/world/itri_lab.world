@@ -8,8 +8,7 @@
       <uri>model://sun</uri>
     </include>
     <include>
-      <!-- <uri>model://itri_lab_wall</uri> -->
-      <!-- <uri>/lui/home/itri_lab_wall</uri> -->
+      <uri>model://itri_lab_wall</uri>
       <name>itri_lab_wall</name>
       <pose>0.0 0.0 0.0 0 0 0</pose>
     </include>
