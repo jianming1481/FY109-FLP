@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <robot name="hokuyo_gazebo" xmlns:xacro="http://ros.org/wiki/xacro">
-  <xacro:macro name="turtlebot_sim_2d_laser">
-    
-    <gazebo reference="hokuyo_link">
-      <sensor type="ray" name="head_hokuyo_sensor">
+  <xacro:macro name="turtlebot_sim_2d_gpu_laser">
+
+    <gazebo reference="hokuyo_gpu_link">
+      <sensor type="gpu_ray" name="head_hokuyo_sensor">
         <pose>0 0 0 0 0 0</pose>
-        <visualize>false</visualize>
+        <visualize>true</visualize>
         <update_rate>40</update_rate>
         <ray>
           <scan>
@@ -23,14 +23,14 @@
           </range>
           <noise>
             <type>gaussian</type>
-              <mean>0.0</mean>
+            <mean>0.0</mean>
             <stddev>0.01</stddev>
           </noise>
         </ray>
-          <plugin name="gazebo_ros_hokuyo_controller" filename="libgazebo_ros_laser.so">
-          <topicName>scan</topicName>
-          <frameName>hokuyo_link</frameName>
-      </plugin>
+        <plugin name="gazebo_ros_gpu_hokuyo_controller" filename="libgazebo_ros_gpu_laser.so">
+          <topicName>gpu_scan</topicName>
+          <frameName>hokuyo_gpu_link</frameName>
+        </plugin>
       </sensor>
     </gazebo>
 

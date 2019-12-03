@@ -19,11 +19,13 @@
 
   <param name="/use_sim_time" value="$(arg use_sim_time)" />
   <param name="map_description" command="$(find xacro)/xacro.py $(arg model)" />
-
+<!-- 
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
-        args="-z 1.0 -unpause -urdf -model wall -param map_description" respawn="false" output="screen" />
+        args="-z 1.0 -unpause -urdf -model wall -param map_description" respawn="false" output="screen" /> -->
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <!-- <arg name="world_name" value="$(find itri_robot_gazebo)/worlds/itri_lab.world"/> -->
+    <arg name="world_name" value="$(find itri_robot_gazebo)/worlds/itri_lab_with_pedestrian.world"/>
     <arg name="debug" value="$(arg debug)" />
     <arg name="gui" value="$(arg gui)" />
     <arg name="paused" value="$(arg paused)"/>

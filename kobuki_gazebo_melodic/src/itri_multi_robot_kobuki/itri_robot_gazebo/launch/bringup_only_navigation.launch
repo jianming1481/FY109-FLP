@@ -23,7 +23,7 @@
   <!-- <include file="$(find teleop_twist_joy)/launch/teleop.launch" /> -->
 
   <!-- Map server -->
-  <arg name="map_file" default="/home/lui/itri_space.yaml"/>
+  <arg name="map_file" default="/home/lui/map_r1.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 
   <!-- AMCL -->
@@ -34,14 +34,14 @@
       <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
       <arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
       <arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
-      <!-- <remap from="odom" to="odometry/filtered"/> -->
+      <remap from="odom" to="odometry/filtered"/>
   </include>
 
   <!-- Move base -->
-  <arg name="custom_param_file" default="$(find kobuki_navigation)/param/costmap_common_params.yaml"/>
+  <!-- <arg name="custom_param_file" default="$(find kobuki_navigation)/param/costmap_common_params.yaml"/>
   <include file="$(find kobuki_navigation)/launch/includes/move_base.launch.xml">
       <arg name="robot_name"     value="itri-agv" />
       <arg name="custom_param_file" value="$(arg custom_param_file)"/>
       <arg name="global_frame_id"   value="map" />
-  </include>
+  </include> -->
 </launch>

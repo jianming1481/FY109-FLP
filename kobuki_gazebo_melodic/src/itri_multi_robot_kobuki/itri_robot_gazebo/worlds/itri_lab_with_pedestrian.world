@@ -14,7 +14,7 @@
          <name>itri_lab_wall</name>
          <pose>0.0 0.0 0.0 0 0 0</pose>
       </include>
-      <actor name="actor">
+      <actor name="actor1">
          <skin>
             <filename>moonwalk.dae</filename>
             <scale>1.0</scale>
@@ -157,6 +157,45 @@
                <waypoint>
                   <time>18.000000</time>
                   <pose>-0.195090 0.980785 0.000000 0.000000 0.000000 0.196345</pose>
+               </waypoint>
+            </trajectory>
+         </script>
+      </actor>
+      <actor name="actor2">
+         <skin>
+            <filename>moonwalk.dae</filename>
+            <scale>1.0</scale>
+         </skin>
+         <pose>1 0 0 0 0 0</pose>
+         <animation name="walking">
+            <filename>walk.dae</filename>
+            <scale>1.000000</scale>
+            <interpolate_x>true</interpolate_x>
+         </animation>
+         <script>
+            <loop>true</loop>
+            <delay_start>0.000000</delay_start>
+            <auto_start>true</auto_start>
+            <trajectory id="0" type="walking">
+               <waypoint>
+                  <time>0.000000</time>
+                  <pose>1.000000 1.000000 0.000000 0.000000 0.000000 0.000000</pose>
+               </waypoint>
+               <waypoint>
+                  <time>3.000000</time>
+                  <pose>-0.195090 0.980785 0.000000 0.000000 0.000000 0.196345</pose>
+               </waypoint>
+               <waypoint>
+                  <time>4.000000</time>
+                  <pose>-0.195090 0.980785 0.000000 0.000000 0.000000 3.14159</pose>
+               </waypoint>
+               <waypoint>
+                  <time>7.000000</time>
+                  <pose>1.00000 1.00000 0.000000 0.000000 0.000000 3.14159</pose>
+               </waypoint>
+               <waypoint>
+                  <time>8.000000</time>
+                  <pose>1.00000 1.00000 0.000000 0.000000 0.000000 0.000000</pose>
                </waypoint>
             </trajectory>
          </script>
